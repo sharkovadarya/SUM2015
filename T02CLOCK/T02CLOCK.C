@@ -22,6 +22,7 @@
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
 VOID DrawArrow( HDC hDC, INT X1, INT Y1, INT Len, DOUBLE Angle );
+VOID DrawHand( HDC hDC, INT X1, INT Y1, INT Len, INT w, DOUBLE Angle );
 
 /* Главная функция программы.
  *   - дескриптор экземпляра приложения:
@@ -114,7 +115,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   SYSTEMTIME st;
   CHAR Buf[100];
   HFONT hFnt, hOldFnt; 
-  HPEN hPen;
+ /* HPEN hPen; */
+ /* HBRUSH hBrush, hOldBr;*/
   static INT xx[100], yy[100];
   static BITMAP bm;
   static HBITMAP hBm, hBmLogo;
@@ -165,10 +167,10 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     Rectangle(hMemDC, 0, 0, w, h);
 
     StretchBlt(hMemDC, w / 2 - bm.bmWidth / 2, h / 2 - bm.bmHeight / 2, bm.bmWidth, bm.bmHeight,
-      hMemDCLogo, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+      hMemDCLogo, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);    
 
     GetLocalTime(&st);
-    hPen = CreatePen(PS_SOLID, 4, RGB(2, 2, 8));
+    /*hPen = CreatePen(PS_SOLID, 4, RGB(2, 2, 8));
     SelectObject(hMemDC, hPen);
     DrawArrow(hMemDC, w / 2, h / 2, 290, st.wSecond * 6);  
     DeleteObject(hPen);   
@@ -179,7 +181,17 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     hPen = CreatePen(PS_SOLID, 4, RGB(22, 8, 228));
     SelectObject(hMemDC, hPen);
     DrawArrow(hMemDC, w / 2, h / 2, 150, (st.wHour % 12) * 30);  
-    DeleteObject(hPen);          
+    DeleteObject(hPen);   */
+    /*hBrush = CreateSolidBrush(RGB(0, 0, 0));
+    hOldBr = SelectObject(hMemDC, hBrush);*/
+    /*SelectObject(hMemDC, hOldBr); */
+    SelectObject(hMemDC, GetStockObject(BLACK_PEN));
+    SelectObject(hMemDC, GetStockObject(BLACK_BRUSH)); 
+    DrawHand(hMemDC, w / 2, h / 2, 280, 30, st.wSecond * 6 * PI / 180);
+   /* DrawHand(hMemDC, w / 2, h / 2, 300, 30, (180 + st.wMinute * 6) * PI / 180);
+    DrawHand(hMemDC, w / 2, h / 2, 300, 30, (180 + (st.wHour % 12) * 30)) * PI / 180); */
+    SelectObject(hMemDC, GetStockObject(NULL_PEN));
+    SelectObject(hMemDC, GetStockObject(NULL_BRUSH));
 
     hFnt = CreateFont(30, 0, 0, 0, FW_BOLD, TRUE, FALSE,
       FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS,
@@ -236,6 +248,38 @@ VOID DrawArrow( HDC hDC, INT X1, INT Y1, INT Len, DOUBLE Angle )
 
   MoveToEx(hDC, X1, Y1, NULL);
   LineTo(hDC, X1 + Len * si, Y1 - Len * co);
+} /* End of 'DrawArrow' function */
+
+/* Draw clock's hand function.
+ * ARGUMENTS:
+ *   - device context:
+ *       HDC hDC;
+ *   - center coordinates:
+ *       INT X1, INT Y1;
+ *   - arrow length:
+ *       INT Len;
+     - arrow width:
+         INT w;
+ *   - angle:
+ *       DOUBLE Angle;
+ * RETURNED VALUES:
+ *   none.
+ */
+VOID DrawHand( HDC hDC, INT X1, INT Y1, INT Len, INT w, DOUBLE Angle )
+{
+  DOUBLE si = sin(Angle), co = cos(Angle);
+  INT i;
+  POINT pnts[] = 
+  {
+    {0, -w}, {-w, 0}, {0, Len}, {w, 0}
+  }, pntdraw[sizeof pnts / sizeof pnts[0]];
+
+  for (i = 0; i < sizeof pnts / sizeof pnts[0]; i++)
+  {
+    pntdraw[i].x = X1 + pnts[i].x * co - pnts[i].y * si;
+    pntdraw[i].y = Y1 + pnts[i].x * si + pnts[i].y * co;
+  }
+  Polygon(hDC, pntdraw, 4);
 } /* End of 'DrawArrow' function */
 
 /* END OF 'T02DBLB.C' FILE */
