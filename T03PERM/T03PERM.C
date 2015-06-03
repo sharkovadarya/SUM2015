@@ -9,6 +9,7 @@
 #define N 5
 
 int p[N];
+int Parity = 0;
 
 void Write( int x );
 
@@ -22,23 +23,31 @@ void Swap( int *A, int *B )
 
 void Go( int Pos )
 {
-  int i;
+  int i ; 
 
   if (Pos == N)
   { 
     for (i = 0; i < N; i++)
-      Write(p[i]);
+      Write(p[i]);  
+    for (i = 0; i < N; i++)
+      printf("%i", p[i]);
+    printf(" - %s\n", Parity ? "odd" : "even");
     return;   
-  }
+  }  
+
   else
   {
     for (i = Pos; i < N; i++)
     {
+      
+      if (Pos != i)
+        Parity = !Parity; 
       Swap(&p[Pos], &p[i]);
-      Go(Pos + 1);        
+      Go(Pos + 1);  
+      if (Pos != i)
+        Parity = !Parity; 
       Swap(&p[Pos], &p[i]);
-      /*if (Pos != i)
-        Parity = !Parity;      */
+         
     }  
   }
   
@@ -72,8 +81,6 @@ void Fill( void )
 
 void main( void )
 {
-/*  bool Parity FALSE; */
-
   Fill();  
   Go(0);
 }
