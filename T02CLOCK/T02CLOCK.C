@@ -16,7 +16,7 @@
 /* »м€ класса окна */
 #define WND_CLASS_NAME "My window class"
 
-#define PI 3.14159
+#define PI 3.14159265358979323846
 
 /* —сылка вперед */
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
@@ -168,26 +168,30 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
       hMemDCLogo, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
 
     GetLocalTime(&st);
-    hPen = CreatePen(PS_SOLID, 4, RGB(0, 0, 0));
+    hPen = CreatePen(PS_SOLID, 4, RGB(2, 2, 8));
     SelectObject(hMemDC, hPen);
-    DrawArrow(hMemDC, w / 2, h / 2, 290, st.wSecond * 6);
-    DrawArrow(hMemDC, w / 2, h / 2, 250, st.wMinute * 6);
+    DrawArrow(hMemDC, w / 2, h / 2, 290, st.wSecond * 6);  
+    DeleteObject(hPen);   
+    hPen = CreatePen(PS_SOLID, 4, RGB(228, 22, 8));
+    SelectObject(hMemDC, hPen); 
+    DrawArrow(hMemDC, w / 2, h / 2, 250, st.wMinute * 6); 
+    DeleteObject(hPen);     
+    hPen = CreatePen(PS_SOLID, 4, RGB(22, 8, 228));
+    SelectObject(hMemDC, hPen);
     DrawArrow(hMemDC, w / 2, h / 2, 150, (st.wHour % 12) * 30);  
-    DeleteObject(hPen);
-
+    DeleteObject(hPen);          
 
     hFnt = CreateFont(30, 0, 0, 0, FW_BOLD, TRUE, FALSE,
       FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS,
       CLIP_DEFAULT_PRECIS, PROOF_QUALITY,
-      VARIABLE_PITCH | FF_ROMAN, "");
-     
+      VARIABLE_PITCH | FF_ROMAN, "");     
    
     hOldFnt = SelectObject(hMemDC, hFnt);
     GetLocalTime(&st);
     SetTextColor(hMemDC, RGB(2, 2, 8));
     SetBkColor(hMemDC, RGB(12, 24, 200));
     SetBkMode(hMemDC, TRANSPARENT);
-    TextOut(hMemDC, w / 2 - 100, 3 * h / 4 - 50, Buf,
+    TextOut(hMemDC, w / 2 - 95, 3 * h / 4 - 50, Buf,
       sprintf(Buf, "%02d:%02d:%02d (%02d.%02d.%d)",
         st.wHour, st.wMinute, st.wSecond,
         st.wDay, st.wMonth, st.wYear)); 
@@ -213,12 +217,25 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   return DefWindowProc(hWnd, Msg, wParam, lParam);
 } /* End of 'MyWindowFunc' function */
 
+/* Draw clock's arrow function.
+ * ARGUMENTS:
+ *   - device context:
+ *       HDC hDC;
+ *   - center coordinates:
+ *       INT X1, INT Y1;
+ *   - arrow length:
+ *       INT Len;
+ *   - angle:
+ *       DOUBLE Angle;
+ * RETURNED VALUES:
+ *   none.
+ */
 VOID DrawArrow( HDC hDC, INT X1, INT Y1, INT Len, DOUBLE Angle )
 {
   DOUBLE si = sin(Angle * PI / 180), co = cos(Angle * PI / 180);
 
   MoveToEx(hDC, X1, Y1, NULL);
   LineTo(hDC, X1 + Len * si, Y1 - Len * co);
-}
+} /* End of 'DrawArrow' function */
 
 /* END OF 'T02DBLB.C' FILE */
