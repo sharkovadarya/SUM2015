@@ -6,6 +6,7 @@
 
 
 #include <windows.h>
+#include "def.h"
 #include "globe.h"
 
 /* Имя класса окна */
@@ -105,8 +106,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam )
 {
-  HDC hDC;   
-  HBRUSH hBr;
+  HDC hDC;
   CREATESTRUCT *cs; 
   static BITMAP bm;
   static HBITMAP hBm, hBmLogo;
@@ -120,8 +120,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     cs = (CREATESTRUCT *)lParam;
     SetTimer(hWnd, 111, 50, NULL);   
 
-    hBmLogo = LoadImage(NULL, "globe.bmp", IMAGE_BITMAP, w, h, LR_LOADFROMFILE);  
-    GetObject(hBmLogo, sizeof(bm), &bm);   
+   /* hBmLogo = LoadImage(NULL, "globe.bmp", IMAGE_BITMAP, w, h, LR_LOADFROMFILE);  
+    GetObject(hBmLogo, sizeof(bm), &bm); */  
 
      /* создаем контекст в памяти */
     hDC = GetDC(hWnd);
@@ -155,7 +155,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     
     SelectObject(hMemDC, GetStockObject(NULL_PEN));
     SelectObject(hMemDC, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(hMemDC, RGB(2, 2, 8));   
+    SetDCBrushColor(hMemDC, RGB(2, 2, 8)); 
     DrawGlobe(hMemDC, w, h);
 
     InvalidateRect(hWnd, NULL, TRUE);

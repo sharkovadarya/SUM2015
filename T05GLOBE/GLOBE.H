@@ -7,6 +7,13 @@
 #ifndef __GLOBE_H_
 #define __GLOBE_H_
 
+#include <windows.h>
+
+/* Тип хранения координат точки в пространстве */
+typedef struct
+{
+  DOUBLE X, Y, Z;
+} VEC; 
 
 #define N 30
 #define M 30
@@ -22,11 +29,9 @@ VEC VecSubVec( VEC A, VEC B );
 
 VOID DrawGlobe( HDC hDC, INT W, INT H );
 
-/* Тип хранения координат точки в пространстве */
-typedef struct
-{
-  DOUBLE X, Y, Z;
-} VEC;     
+VOID BuildGlobe( void );
+
+    
 
 #endif /*__GLOBE_H_*/
 
