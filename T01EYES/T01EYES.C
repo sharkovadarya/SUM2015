@@ -8,11 +8,13 @@
 
 /* Имя класса окна */
 #define WND_CLASS_NAME "My window class"
+#define sqr(x) ((x) * (x))
 
 /* Ссылка вперед */
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
-VOID DrawEye( HDC hDC, INT w, INT h, INT Xc, INT Yc );
+VOID DrawEye( HDC hDC, INT w, INT h );   
+VOID DrawPupil( HDC hDC, INT w, INT h, INT X1, INT Y1 );
 
 /* Главная функция программы.
  *   - дескриптор экземпляра приложения:
@@ -96,28 +98,34 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam )
 {
-  static INT w, h, a = 200;
   HDC hDC;
   POINT pt;
+  static INT w, h, a = 200;
+  
 
   switch (Msg)
   {
   case WM_CREATE:
-    SetTimer(hWnd, 111, 50, NULL);
+    SetTimer(hWnd, 111, 50, NULL);  
     return 0;
   case WM_SIZE:
     w = LOWORD(lParam);
     h = HIWORD(lParam);       
     return 0;
-  case WM_TIMER: 
-    hDC = GetDC(hWnd); 
-   /* DrawEye(hDC, w, h, w / 2, h / 2); */     
-    ReleaseDC(hWnd, hDC);
-    GetCursorPos(&pt);
-    ScreenToClient(hWnd, &pt);  
-    DrawEye(hDC, w, h, pt.x, pt.y);
+  case WM_TIMER:
+ 
+    hDC = GetDC(hWnd);
+    SelectObject(hDC, GetStockObject(BLACK_PEN));
+    SelectObject(hDC, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(hDC, RGB(0, 255, 255));
+    Rectangle(hDC, 0, 0, w + 1, h + 1);
 
-   
+    
+    DrawEye(hDC, w, h);    
+    GetCursorPos(&pt);
+    ScreenToClient(hWnd, &pt);   
+    DrawPupil(hDC, w, h, pt.x, pt.y); 
+    ReleaseDC(hWnd, hDC);
                   
     return 0;
   case WM_DESTROY:
@@ -139,59 +147,33 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
  * RETURNING:
  *   none.
  */
-/*VOID DrawEye( HWND hWnd, HDC hDC, INT w, INT h, INT Xc, INT Yc )
+
+
+VOID DrawEye( HDC hDC, INT w, INT h )
 {
-  SelectObject(hDC, GetStockObject(DC_PEN));
-  SetDCPenColor(hDC, RGB(0, 0, 0));
-  SelectObject(hDC, GetStockObject(DC_BRUSH));
-  SetDCBrushColor(hDC, RGB(255, 255, 255));
-  Ellipse(hDC, w / 4 + (w / 8 - h / 8), h / 4, w - w / 2 - (w / 4 - h / 8), h - h / 2);
-  Ellipse(hDC, w - w / 2 - (w / 4 - h / 8) + 2 * (w / 4 - h / 8), h / 4, w - 3 * w / 4 - (w / 4 - h / 8), h - h / 2);  SelectObject(hDC, GetStockObject(DC_PEN));
-  SetDCPenColor(hDC, RGB(0, 0, 0));
-  SelectObject(hDC, GetStockObject(DC_BRUSH));
-  SetDCBrushColor(hDC, RGB(0, 0, 0));
-  Ellipse(hDC, w / 4 + (w / 8 - h / 8), h / 4, w - w / 2 - (w / 4 - h / 8), h - h / 2);
-  Ellipse(hDC, w - w / 2 - (w / 4 - h / 8) + 2 * (w / 4 - h / 8), h / 4, w - 3 * w / 4 - (w / 4 - h / 8), h - h / 2);  
-}        */
-
-/*VOID DrawEye( HWND hWnd, HDC hDC, INT w, INT h, INT Xc, INT Yc )
-{
-  static INT a = 200;                     
-  Ellipse(hDC, w / 12, 5, (w - w / 6) / 2, (h - 10) / 2);
-  Ellipse(hDC, w / 12 + w / 2, 5, (w - w / 6) / 2 + w / 2, (h - 10) / 2);    
-  SelectObject (hDC, GetStockObject(DC_BRUSH));
-  SetDCBrushColor(hDC, RGB(0, 0, 0));
-  Ellipse(hDC, w / 12 + a, 5 + a, (w - w / 6) / 2 - a, (h - 10) / 2 - a);
-  Ellipse(hDC, w / 12 + w / 2 + a, 5 + a, (w - w / 6) / 2 + w / 2 - a, (h - 10) / 2 - a);   
-  ReleaseDC(hWnd, hDC);   
-} /* End of 'DrawEye' function */ 
-
-VOID DrawEye( HDC hDC, INT W, INT H, INT Xc, INT Yc )
-{
-  FLOAT
-    len = sqrt(sqr(Xc - W / 2) + sqr(Yc - H / 2)),
-    co = (Xc - W / 2) / len, si = (Yc - H / 2) / len;
-  INT l = 30, x = W / 2 + co * l, y = H / 2 + si * l;
-
-  l = len;
-  if (l > W / 2 - W / 8)
-    l = W / 2 - W / 8;
-  x = W / 2 + co * l;
-  y = H / 2 + si * l;
-
-
-  SelectObject(hDC, GetStockObject(DC_PEN));
-  SelectObject(hDC, GetStockObject(DC_BRUSH));
-  SetDCPenColor(hDC, RGB(0, 0, 0));
-  SetDCBrushColor(hDC, RGB(255, 255, 255));
-  Ellipse(hDC, 0, 0, W, H);
-  SetDCPenColor(hDC, RGB(0, 0, 0));
-  SetDCBrushColor(hDC, RGB(2, 55, 5));
-  Ellipse(hDC, x - W / 8, y - H / 8, x + W / 8, y + H / 8);
+  SelectObject(hDC, GetStockObject(WHITE_BRUSH));
+  Ellipse(hDC, w / 2 - 150, h / 2 + 50, w / 2 - 50, h / 2 - 50);
+  Ellipse(hDC, w / 2 + 50, h / 2 + 50, w / 2 + 150, h / 2 - 50);  
+  SelectObject(hDC, GetStockObject(NULL_BRUSH));
 
 } /* End of 'DrawEye' function */
 
+VOID DrawPupil( HDC hDC, INT w, INT h, INT X1, INT Y1 )
+{
+  DOUBLE len = sqrt(sqr(X1 - w / 2 + 115) + sqr(Y1 - h / 2 - 15)), co = (X1 - w / 2 + 85) / len, si = (Y1 - h / 2 + 15) / len;
+  INT l = 20, x = w / 2 - 100 + co * l, y = h / 2 + si * l;
 
+  l = len;
+  if (l > 20)
+    l = 20;
+  x = w / 2 - 100 + co * l;
+  y = h / 2 + si * l;
+
+  SelectObject(hDC, GetStockObject(BLACK_BRUSH));
+  Ellipse(hDC, x - 10, y + 10, x + 10, y - 10);
+  /*Ellipse(hDC, x + 50, y + 50, x + 150, y - 50);  */
+  SelectObject(hDC, GetStockObject(NULL_BRUSH)); 
+}
 
 
 /* END OF 'T01FWIN.C' FILE */
