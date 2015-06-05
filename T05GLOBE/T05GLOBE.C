@@ -17,8 +17,40 @@
 /* Ссылка вперед */
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
-VOID DrawArrow( HDC hDC, INT X1, INT Y1, INT Len, DOUBLE Angle );
-VOID DrawHand( HDC hDC, INT X1, INT Y1, INT Len, INT w, DOUBLE Angle );
+
+VOID FlipFullScreen( HWND hWnd ) 
+{
+  static BOOL IsFullScreen = FALSE;
+  static RECT SaveRC;
+
+  if (!IsFullScreen)
+  {
+    RECT rc;
+    HMONITOR hmon;
+    MONITORINFOEX moninfo;
+
+    GetWindowRect(hWnd, &SaveRC);
+    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+    moninfo.cbSize = sizeof(moninfo);
+    GetMonitorInfo(hmon, (MONITORINFO *)&moninfo);
+    
+    rc = moninfo.rcMonitor;
+
+    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+
+    SetWindowPos(hWnd, HWND_TOP, rc.left, rc.top
+      , rc.right - rc.left, rc.bottom - rc.top + 201, SWP_NOOWNERZORDER);
+    IsFullScreen = TRUE;
+  }
+  else
+  {
+    SetWindowPos(hWnd, HWND_TOPMOST, SaveRC.left, SaveRC.top, SaveRC.right - SaveRC.left, SaveRC.bottom - SaveRC.top, SWP_NOOWNERZORDER);
+    IsFullScreen = FALSE;
+  }
+
+
+} 
+
 
 /* Главная функция программы.
  *   - дескриптор экземпляра приложения:
@@ -48,7 +80,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                                        * отработки двойного нажатия */
   wc.cbClsExtra = 0; /* Дополнительное количество байт для класса */
   wc.cbWndExtra = 0; /* Дополнительное количество байт для окна */
-  wc.hbrBackground = CreateSolidBrush(RGB(255, 255, 0));
+  wc.hbrBackground = CreateSolidBrush(RGB(255, 255, 255));
   wc.hCursor = LoadCursor(NULL, IDC_HAND); /* Загрузка курсора (системного) */
   wc.hIcon = LoadIcon(NULL, IDI_ASTERISK); /* Загрузка пиктограммы (системной) */
   wc.hInstance = hInstance; /* Дескриптор приложения, регистрирующего класс */
@@ -118,12 +150,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   {
   case WM_CREATE:
     cs = (CREATESTRUCT *)lParam;
-    SetTimer(hWnd, 111, 50, NULL);   
-
-   /* hBmLogo = LoadImage(NULL, "globe.bmp", IMAGE_BITMAP, w, h, LR_LOADFROMFILE);  
-    GetObject(hBmLogo, sizeof(bm), &bm); */  
-
-     /* создаем контекст в памяти */
+    SetTimer(hWnd, 111, 50, NULL);     
+    /* создаем контекст в памяти */
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
     ReleaseDC(hWnd, hDC);
@@ -151,15 +179,17 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     SelectObject(hMemDC, GetStockObject(NULL_PEN));
     SelectObject(hMemDC, GetStockObject(DC_BRUSH));
     SetDCBrushColor(hMemDC, RGB(255, 255, 255));   
-    Rectangle(hMemDC, 0, 0, w + 1, h + 1);   
+    Rectangle(hMemDC, 0, 0, w + 1, h + 1);  
+
     
-    SelectObject(hMemDC, GetStockObject(NULL_PEN));
-    SelectObject(hMemDC, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(hMemDC, RGB(2, 2, 8)); 
     DrawGlobe(hMemDC, w, h);
 
     InvalidateRect(hWnd, NULL, TRUE);
-    return 0;      
+    return 0;  
+
+  case WM_KEYDOWN:
+    if (wParam = 'F')
+      FlipFullScreen(hWnd);
 
 
    case WM_ERASEBKGND:
