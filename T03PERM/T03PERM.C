@@ -1,7 +1,7 @@
 /* FILE NAME: T03PERM.C
  * PROGRAMMER: DS6
  * DATE: 03.06.2015
- * PURPOSE: ...
+ * PURPOSE: calculate the number of "changes".
 */
 
 #include <stdio.h>
