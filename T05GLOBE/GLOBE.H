@@ -12,11 +12,13 @@
 #define M 30
 #define PI 3.14159265358979323846
 
-/*VEC RotateX( VEC P, DOUBLE AngleDegree );
+VOID DrawQuad( HDC hDC, VEC P0, VEC P1, VEC P2, VEC P3, INT W, INT H );
+
+VEC RotateX( VEC P, DOUBLE AngleDegree );
 
 VEC VecCrossVec( VEC A, VEC B );
 
-VEC VecSubVec( VEC A, VEC B );   */
+VEC VecSubVec( VEC A, VEC B );     
 
 VOID DrawGlobe( HDC hDC, INT W, INT H );
 

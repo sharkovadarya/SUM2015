@@ -8,7 +8,7 @@
 #include <time.h>
 #include "globe.h"
 /* Функция поворота точки вокруг оси X */
-/*VEC RotateX( VEC P, DOUBLE AngleDegree )
+VEC RotateX( VEC P, DOUBLE AngleDegree )
 {
   DOUBLE a = AngleDegree * PI / 180, si = sin(a), co = cos(a);
   VEC r;
@@ -17,10 +17,10 @@
   r.Y = P.Y * co - P.Z * si;
   r.Z = P.Y * si + P.Z * co;
   return r;
-} *//* End of 'RotateX' function */
+} /* End of 'RotateX' function */
 
 /* Функция векторного произведения */
-/*VEC VecCrossVec( VEC A, VEC B )
+VEC VecCrossVec( VEC A, VEC B )
 {
   VEC r;
 
@@ -28,10 +28,10 @@
   r.Y = A.Z * B.X - A.X * B.Z;
   r.Z = A.X * B.Y - A.Y * B.X;
   return r;
-}*/ /* End of 'VecCrossVec' function */
+} /* End of 'VecCrossVec' function */
 
 /* Функция вычитания векторов */
-/*VEC VecSubVec( VEC A, VEC B )
+VEC VecSubVec( VEC A, VEC B )
 {
   VEC r;
 
@@ -39,16 +39,16 @@
   r.Y = A.Y - B.Y;
   r.Z = A.Z - B.Z;
   return r;
-}*/ /* End of 'VecSubVec' function */
+} /* End of 'VecSubVec' function */
 
 /* Рисование четырехугольника */
-/*VOID DrawQuad( HDC hDC, VEC P0, VEC P1, VEC P2, VEC P3, INT W, INT H )
+VOID DrawQuad( HDC hDC, VEC P0, VEC P1, VEC P2, VEC P3, INT W, INT H )
 {
   VEC Norm = VecCrossVec(VecSubVec(P3, P0), VecSubVec(P1, P0));
   POINT pnts[4];
 
   /* back-face culling */
- /* if (Norm.Z < 0)
+  if (Norm.Z < 0)
     return;
 
   pnts[0].x = P0.X + W / 2;
@@ -65,7 +65,7 @@
 
 
   Polygon(hDC, pnts, 4);
-}*/ /* End of 'DrawQuad' function */
+} /* End of 'DrawQuad' function */
 
 VOID DrawGlobe( HDC hDC, INT W, INT H )
 {

@@ -108,7 +108,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   HDC hDC;   
   HBRUSH hBr;
   CREATESTRUCT *cs; 
-  static HBITMAP hBm;
+  static BITMAP bm;
+  static HBITMAP hBm, hBmLogo;
   static HDC hMemDC; 
   static INT w, h;
   
@@ -118,6 +119,10 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   case WM_CREATE:
     cs = (CREATESTRUCT *)lParam;
     SetTimer(hWnd, 111, 50, NULL);   
+
+    hBmLogo = LoadImage(NULL, "globe.bmp", IMAGE_BITMAP, w, h, LR_LOADFROMFILE);  
+    GetObject(hBmLogo, sizeof(bm), &bm);   
+
      /* создаем контекст в памяти */
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
