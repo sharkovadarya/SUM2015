@@ -12,8 +12,8 @@
 #define PI 3.14159265358979323846  /*define pi*/
 #define D2R(A) ((A) * PI / 180.0)  /* degree to radian */
 #define DEGREE2RADIANL 0.01745329251994329576L /* degree to radian for rotation functions */
-/* Multiplyer degree to radian constant */
-long double MultiplierDegree2Radian = DEGREE2RADIANL;
+extern long double MultiplierDegree2Radian;
+
 
 /* basic float point type */
 typedef double DBL;
@@ -257,7 +257,7 @@ __inline MATR MatrInverse( MATR M )
     return MatrIdentity();
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)  
-      r.A[j][i] =
+      r.A[j][i] = (1 - (i + j) % 2 * 2) * 
         MatrDeterm3x3(M.A[p[i][0]][p[j][0]], M.A[p[i][0]][p[j][1]], M.A[p[i][0]][p[j][2]],
                       M.A[p[i][1]][p[j][0]], M.A[p[i][1]][p[j][1]], M.A[p[i][1]][p[j][2]],
                       M.A[p[i][2]][p[j][0]], M.A[p[i][2]][p[j][1]], M.A[p[i][2]][p[j][2]]) / det;

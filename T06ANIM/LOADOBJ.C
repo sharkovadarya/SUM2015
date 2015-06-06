@@ -4,7 +4,11 @@
  * LAST UPDATE: 06.06.2015
  */
 
+#pragma warning(disable: 4244) 
+
 #include <stdlib.h>
+#include <stdio.h>
+#include <windows.h>
 
 #include "vec.h"
 
@@ -14,20 +18,7 @@
 VEC *ObjV; /* Vertex coordinates */
 INT ObjNumOfV; /* Number of model vertices */
 
-/* Draw object functioln.
- * ARGUMENTS: None.
- * RETURNS: None.
- */
-/*VOID ObjDraw( VOID )
-{
-  INT i;
 
-  for (i = 0; i < ObjNumOfV; i++)
-  {
-    /* pixel ObjV[i] drawing *//*
-  }
-
-}*/ /* End of 'ObjDraw' function */
 
 /* Draw object functioln.
  * ARGUMENTS:
@@ -78,5 +69,18 @@ BOOL ObjLoad( CHAR *FileName )
   ObjNumOfV = nv;
   return TRUE;
 } /* End of 'ObjLoad' function */
+
+/* Draw object functioln.
+ * ARGUMENTS: None.
+ * RETURNS: None.
+ */
+VOID ObjDraw( HDC hDC,  INT W, INT H )
+{
+  INT i;
+
+  for (i = 0; i < ObjNumOfV; i++)
+    Ellipse(hDC, W / 2 + 10 + ObjV[i].X, H / 2  - ObjV[i].Y + 10, W / 2 + ObjV[i].X - 10, H / 2 - ObjV[i].Y - 10);
+
+} /* End of 'ObjDraw' function */
 
 /* END OF 'LOADOBJ.C' FILE */

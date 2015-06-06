@@ -25,13 +25,20 @@ VEC RotateX( VEC P, DOUBLE AngleDegree )
 
 
 
-/* Рисование четырехугольника */
+/* Fill the surface of the globe with polygons.
+ * ARGUMENTS:
+ *   - device context:
+ *       HDC hDC;
+ *   - VECTORS:
+ *       VEC P0, P1, P2, P3;
+ *   - window size:
+ *       INT W, H;
+ * RETURNS:
+ *   none.
+ */
 VOID DrawQuad( HDC hDC, VEC P0, VEC P1, VEC P2, VEC P3, INT W, INT H )
-{
-
-  POINT pnts[4];
-
-
+{   
+  POINT pnts[4];   
 
   pnts[0].x = P0.X + W / 2;
   pnts[0].y = -P0.Y + H / 2;
@@ -77,11 +84,12 @@ VOID DrawGlobe( HDC hDC, INT W, INT H )
       DrawQuad(hDC, Grid[i][j], Grid[i + 1][j], Grid[i + 1][j + 1], Grid[i][j + 1], W, H);      
     }
   }
-}
+}   
+
 
 VOID BuildGlobe( void )
 {
-    DOUBLE phi, theta, R = 200, t = clock() / (DOUBLE)CLOCKS_PER_SEC;
+  DOUBLE phi, theta, R = 228, t = clock() / (DOUBLE)CLOCKS_PER_SEC;
   INT i, j;   
 
   for (i = 0; i < N; i++)
@@ -89,11 +97,13 @@ VOID BuildGlobe( void )
     theta = i / (N - 1.0) * PI;
     for (j = 0; j < M; j++)
     {
-      phi = j / (M - 1.0) * 2 * PI + t * 2.28;
+      phi = j / (M - 1.0) * 2 * PI + t * 0.228;
 
       Grid[i][j].X = (int)(R * sin(theta) * sin(phi));
       Grid[i][j].Y = (int)(R * cos(theta));
-      Grid[i][j].Z = (int)(R * sin(theta) * cos(phi));         
+      Grid[i][j].Z = (int)(R * sin(theta) * cos(phi));
+
+      Grid[i][j] = RotateX(Grid[i][j], sin(t * 0.0228) * 45);
       
     }
   } 

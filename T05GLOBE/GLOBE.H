@@ -15,9 +15,10 @@ typedef struct
   DOUBLE X, Y, Z;
 } VEC; 
 
-#define N 50
-#define M 50
+#define N 20
+#define M 20
 #define PI 3.14159265358979323846
+#define Radius 228
 
 VOID DrawQuad( HDC hDC, VEC P0, VEC P1, VEC P2, VEC P3, INT W, INT H );
 

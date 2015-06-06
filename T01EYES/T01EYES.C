@@ -158,22 +158,42 @@ VOID DrawEye( HDC hDC, INT w, INT h )
 
 } /* End of 'DrawEye' function */
 
+/* Draw Eye Pupil function.
+ * ARGUMENTS:
+ *   - window descriptor:
+ *       HWND hWnd;
+ *   - window width:    
+ *       INT w;
+ *   - window height:
+ *       INT h; 
+ *   - center coordinates:
+         INT X1, Y1;
+ * RETURNING:
+ *   none.
+ */
 VOID DrawPupil( HDC hDC, INT w, INT h, INT X1, INT Y1 )
 {
-  DOUBLE len = sqrt(sqr(X1 - w / 2 + 115) + sqr(Y1 - h / 2 - 15)), co = (X1 - w / 2 + 85) / len, si = (Y1 - h / 2 + 15) / len;
-  INT l = 20, x = w / 2 - 100 + co * l, y = h / 2 + si * l;
+  DOUBLE len = sqrt(sqr(X1 - w / 2 + 100) + sqr(Y1 - h / 2)), co = (X1 - w / 2 + 100) / len, si = (Y1 - h / 2) / len;
+  INT l = 25, x = w / 2 - 100 + co * l, y = h / 2 + si * l;
 
   l = len;
-  if (l > 20)
-    l = 20;
+  if (l > 25)
+    l = 25;
   x = w / 2 - 100 + co * l;
   y = h / 2 + si * l;
 
   SelectObject(hDC, GetStockObject(BLACK_BRUSH));
   Ellipse(hDC, x - 10, y + 10, x + 10, y - 10);
-  /*Ellipse(hDC, x + 50, y + 50, x + 150, y - 50);  */
+
+  len = sqrt(sqr(X1 - w / 2 - 100) + sqr(Y1 - h / 2)), co = (X1 - w / 2 - 100) / len, si = (Y1 - h / 2) / len;
+  l = len;
+  if (l > 20)
+    l = 20;
+  x = w / 2 + 100 + co * l;
+  y = h / 2 + si * l;
+  Ellipse(hDC, x - 10, y + 10, x + 10, y - 10);
   SelectObject(hDC, GetStockObject(NULL_BRUSH)); 
-}
+} /* End of 'DrawEye' function */
 
 
 /* END OF 'T01FWIN.C' FILE */

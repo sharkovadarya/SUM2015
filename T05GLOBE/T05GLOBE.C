@@ -180,7 +180,6 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     SelectObject(hMemDC, GetStockObject(DC_BRUSH));
     SetDCBrushColor(hMemDC, RGB(255, 255, 255));   
     Rectangle(hMemDC, 0, 0, w + 1, h + 1);  
-
     
     DrawGlobe(hMemDC, w, h);
 
