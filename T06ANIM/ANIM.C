@@ -4,10 +4,34 @@
  * LAST UPDATE: 08.06.2015
  */
 
+#include <stdio.h>
 #include "anim.h"
+
 
 /* Системный контекст анимации */
 static ds6ANIM DS6_Anim;
+static INT64
+  TimeFreq,  /* единиц измерения в секунду */
+  TimeStart, /* время начала анимации */
+  TimeOld,   /* время прошлого кадра */
+  TimePause, /* время простоя в паузе */
+  TimeFPS;   /* время для замера FPS */
+static INT
+  FrameCounter; /* счетчик кадров */
+
+
+/* Функция установки паузы анимации.
+ * АРГУМЕНТЫ:
+ *   - флаг паузы:
+ *       BOOL NewPauseFlag;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+ */
+VOID DS6_AnimSetPause( BOOL NewPauseFlag )
+{
+  DS6_Anim.IsPause = NewPauseFlag;
+} /* End of 'AG6_AnimSetPause' function */
+
+
 
 /* Функция инициализации анимации.
  * АРГУМЕНТЫ:
@@ -20,13 +44,21 @@ VOID DS6_AnimInit( HWND hWnd )
   HDC hDC = GetDC(hWnd);
   LARGE_INTEGER li;
 
+  /* Инициализация таймера */
+  QueryPerformanceFrequency(&li);
+  TimeFreq = li.QuadPart;
+  QueryPerformanceCounter(&li);
+  TimeStart = TimeOld = TimeFPS = li.QuadPart;
+  DS6_Anim.IsPause = FALSE;
+  FrameCounter = 0;
+
   DS6_Anim.hWnd = hWnd;
   /* Инициализируем буфер кадра */
   DS6_Anim.hDC = CreateCompatibleDC(hDC);
-  DS6_Anim.hBmFrame = CreateCompatibleBitmap(hDC, 30, 30);
+  DS6_Anim.hBmFrame = CreateCompatibleBitmap(hDC, 300, 300);
   SelectObject(DS6_Anim.hDC, DS6_Anim.hBmFrame);
-  DS6_Anim.W = 30;
-  DS6_Anim.H = 30;
+  DS6_Anim.W = 1000;
+  DS6_Anim.H = 1000;
   DS6_Anim.NumOfUnits = 0;
   ReleaseDC(hWnd, hDC);
 
@@ -85,6 +117,39 @@ VOID DS6_AnimResize( INT W, INT H )
 VOID DS6_AnimRender( VOID )
 {
   INT i;
+  LARGE_INTEGER li;
+
+  QueryPerformanceCounter(&li);
+  DS6_Anim.GlobalTime = (DBL)(li.QuadPart - TimeStart) / TimeFreq;
+  DS6_Anim.GlobalDeltaTime = (DBL)(li.QuadPart - TimeOld) / TimeFreq;
+
+  if (!DS6_Anim.IsPause)
+    DS6_Anim.DeltaTime = DS6_Anim.GlobalDeltaTime;
+  else
+  {
+    TimePause += li.QuadPart - TimeOld;
+    DS6_Anim.DeltaTime = 0;
+  }
+
+  DS6_Anim.Time = (DBL)(li.QuadPart - TimePause - TimeStart) / TimeFreq;
+
+  /* вычисляем FPS */
+  if (li.QuadPart - TimeFPS > TimeFreq)
+  {
+    static CHAR Buf[100];
+
+    sprintf(Buf, "FPS: %.5f", DS6_Anim.FPS);
+    SetWindowText(DS6_Anim.hWnd, Buf);
+
+    DS6_Anim.FPS = FrameCounter / ((DBL)(li.QuadPart - TimeFPS) / TimeFreq);
+    TimeFPS = li.QuadPart;
+    FrameCounter = 0;
+  }
+
+  /* время "прошлого" кадра */
+  TimeOld = li.QuadPart;
+
+  FrameCounter++;
 
   /* опрос на изменение состояний объектов */
   for (i = 0; i < DS6_Anim.NumOfUnits; i++)
@@ -143,10 +208,10 @@ VOID DS6_AnimAddUnit( ds6UNIT *Unit )
  * АРГУМЕНТЫ: Нет.
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
-VOID DS6_AnimFlipFullScreen( VOID )
+VOID DS6_AnimFlipFullScreen( HWND hWnd ) 
 {
-  static BOOL IsFullScreen = FALSE; /* текущий режим */
-  static RECT SaveRC;               /* сохраненный размер */
+  static BOOL IsFullScreen = FALSE;
+  static RECT SaveRC;
 
   if (!IsFullScreen)
   {
@@ -154,37 +219,27 @@ VOID DS6_AnimFlipFullScreen( VOID )
     HMONITOR hmon;
     MONITORINFOEX moninfo;
 
-    /* сохраняем старый размер окна */
-    GetWindowRect(DS6_Anim.hWnd, &SaveRC);
-
-    /* определяем в каком мониторе находится окно */
-    hmon = MonitorFromWindow(DS6_Anim.hWnd, MONITOR_DEFAULTTONEAREST);
-
-    /* получаем информацию для монитора */
+    GetWindowRect(hWnd, &SaveRC);
+    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
     moninfo.cbSize = sizeof(moninfo);
     GetMonitorInfo(hmon, (MONITORINFO *)&moninfo);
-
-    /* переходим в полный экран */
+    
     rc = moninfo.rcMonitor;
 
-    AdjustWindowRect(&rc, GetWindowLong(DS6_Anim.hWnd, GWL_STYLE), FALSE);
+    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
 
-    SetWindowPos(DS6_Anim.hWnd, HWND_TOPMOST,
-      rc.left, rc.top,
-      rc.right - rc.left, rc.bottom - rc.top,
-      SWP_NOOWNERZORDER);
+    SetWindowPos(hWnd, HWND_TOP, rc.left, rc.top
+      , rc.right - rc.left, rc.bottom - rc.top + 201, SWP_NOOWNERZORDER);
     IsFullScreen = TRUE;
   }
   else
   {
-    /* восстанавливаем размер окна */
-    SetWindowPos(DS6_Anim.hWnd, HWND_TOP,
-      SaveRC.left, SaveRC.top,
-      SaveRC.right - SaveRC.left, SaveRC.bottom - SaveRC.top,
-      SWP_NOOWNERZORDER);
+    SetWindowPos(hWnd, HWND_TOPMOST, SaveRC.left, SaveRC.top, SaveRC.right - SaveRC.left, SaveRC.bottom - SaveRC.top, SWP_NOOWNERZORDER);
     IsFullScreen = FALSE;
   }
-} /* End of 'DS6_AnimFlipFullScreen' function */
+
+
+}   /* End of 'DS6_AnimFlipFullScreen' function */
 
 /* Функция выхода из анимации.
  * АРГУМЕНТЫ: Нет.

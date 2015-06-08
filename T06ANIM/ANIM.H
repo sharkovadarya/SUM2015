@@ -22,6 +22,8 @@ typedef struct
   INT W, H;           /* Размер окна вывода */
   HBITMAP hBmFrame;   /* Буфер кадра */
   HDC hDC;            /* Контекст вывода */
+  BOOL IsPause; 
+  DBL GlobalTime, GlobalDeltaTime, DeltaTime, Time, FPS;
 
   /* Массив элементов анимации и их количество */
   ds6UNIT *Units[DS6_MAX_UNITS]; 
