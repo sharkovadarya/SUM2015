@@ -179,21 +179,69 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\LOADOBJ.C"
+				RelativePath=".\DEF.H"
 				>
 			</File>
 			<File
 				RelativePath=".\MAIN.C"
 				>
 			</File>
-			<File
-				RelativePath=".\VEC.C"
+			<Filter
+				Name="Animation System"
 				>
-			</File>
-			<File
-				RelativePath=".\VEC.H"
+				<File
+					RelativePath=".\ANIM.C"
+					>
+				</File>
+				<File
+					RelativePath=".\ANIM.H"
+					>
+				</File>
+				<File
+					RelativePath=".\UNIT.C"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Units"
 				>
-			</File>
+				<File
+					RelativePath=".\UBALL.C"
+					>
+				</File>
+				<File
+					RelativePath=".\UNITS.H"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="3D Object Support"
+				>
+				<File
+					RelativePath=".\IMAGE.C"
+					>
+				</File>
+				<File
+					RelativePath=".\IMAGE.H"
+					>
+				</File>
+				<File
+					RelativePath=".\LOADOBJ.C"
+					>
+				</File>
+				<File
+					RelativePath=".\OBJ3D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\VEC.C"
+					>
+				</File>
+				<File
+					RelativePath=".\VEC.H"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

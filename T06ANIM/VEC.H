@@ -220,8 +220,6 @@ __inline DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
         -A11 * A23 * A32 - A12 * A21 * A33 - A13 * A22 * A31;
 }
 
-
-
 /* matrix determinator calculation */
 __inline DBL MatrDeterm( MATR M )
 {
@@ -355,6 +353,70 @@ __inline VEC VectorTransform( VEC V, MATR M )
     V.X * M.A[0][2] + V.Y * M.A[1][2] + V.Z * M.A[2][2]);
 } /* End of 'VectorTransform' function */ 
 
+/* Rotate vector: (X) function. */
+__inline VEC VecRotateX( VEC V, DBL AngleDegree )
+{
+  DBL sine, cosine, tmp;
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleDegree
+    fmul MultiplierDegree2Radian
+    
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  tmp = V.Y * cosine - V.Z * sine;
+  V.Z = V.Y * sine + V.Z * cosine;
+  V.Y = tmp;
+  return V;
+  
+} /* End of 'VecRotateX' function. */
+
+/* Rotate vector: (Y) function. */
+__inline VEC VecRotateY( VEC V, DBL AngleDegree )
+{
+  DBL sine, cosine, tmp;
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleDegree
+    fmul MultiplierDegree2Radian
+    
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  tmp = V.Z * cosine - V.X * sine;
+  V.X = V.Z * sine + V.X * cosine;
+  V.Z = tmp;
+  return V;
+  
+} /* End of 'VecRotateY' function. */
+
+/* Rotate vector: (Z) function. */
+__inline VEC VecRotateZ( VEC V, DBL AngleDegree )
+{
+  DBL sine, cosine, tmp;
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleDegree
+    fmul MultiplierDegree2Radian
+    
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  tmp = V.X * cosine - V.Y * sine;
+  V.Y = V.X * sine + V.Y * cosine;
+  V.X = tmp;
+  return V;
+} /* End of 'VecRotateZ' function */
 
 
 #endif /*__VEC_H_*/

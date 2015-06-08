@@ -16,8 +16,7 @@
 
 /* Vertex array */
 VEC *ObjV; /* Vertex coordinates */
-INT ObjNumOfV; /* Number of model vertices */
-
+INT ObjNumOfV; /* Number of model vertices */     
 
 
 /* Draw object functioln.
@@ -60,6 +59,7 @@ BOOL ObjLoad( CHAR *FileName )
     {
       sscanf(Buf + 2, "%lf%lf%lf",
         &ObjV[nv].X, &ObjV[nv].Y, &ObjV[nv].Z);
+      ObjV[nv] = VecMulNum(ObjV[nv], 60);
       nv++;
     }
   }
@@ -74,12 +74,13 @@ BOOL ObjLoad( CHAR *FileName )
  * ARGUMENTS: None.
  * RETURNS: None.
  */
-VOID ObjDraw( HDC hDC,  INT W, INT H )
+VOID ObjDraw( HDC hDC, INT W, INT H )
 {
   INT i;
 
+  SelectObject(hDC, GetStockObject(WHITE_BRUSH));
   for (i = 0; i < ObjNumOfV; i++)
-    Ellipse(hDC, W / 2 + 10 + ObjV[i].X, H / 2  - ObjV[i].Y + 10, W / 2 + ObjV[i].X - 10, H / 2 - ObjV[i].Y - 10);
+    Ellipse(hDC, W / 2 + ObjV[i].X - 5, H / 2 - ObjV[i].Y - 5, W / 2 + ObjV[i].X + 5, H / 2 - ObjV[i].Y + 5); 
 
 } /* End of 'ObjDraw' function */
 

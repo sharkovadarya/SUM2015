@@ -6,7 +6,8 @@
 #pragma warning(disable: 4244) 
 
 #include <windows.h>
-#include "vec.h"   
+#include "vec.h"
+#include "obj3d.h"
 
 /* »м€ класса окна */
 #define WND_CLASS_NAME "My window class"
@@ -14,8 +15,6 @@
 /* —сылка вперед */
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
-BOOL ObjLoad( CHAR *FileName );
-VOID ObjDraw( HDC hDC );
 
 VOID FlipFullScreen( HWND hWnd ) 
 {
@@ -145,8 +144,9 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 
   switch (Msg)
   {
-  case WM_CREATE:
-    cs = (CREATESTRUCT *)lParam;
+  case WM_CREATE: 
+    ObjLoad("cow.object"); 
+    cs = (CREATESTRUCT *)lParam;     
     SetTimer(hWnd, 111, 50, NULL);     
     /* creating a context in memory */
     hDC = GetDC(hWnd);
@@ -161,10 +161,9 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 
     if (hBm != NULL)
       DeleteObject(hBm);
-
+          
     hDC = GetDC(hWnd);                                                                            
-    hBm = CreateCompatibleBitmap(hDC, w, h); 
-    
+    hBm = CreateCompatibleBitmap(hDC, w, h);     
     ReleaseDC(hWnd, hDC);
 
     SelectObject(hMemDC, hBm);
@@ -174,20 +173,22 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   case WM_TIMER:      
     /* Clear Background */
     SelectObject(hMemDC, GetStockObject(NULL_PEN));
-    SelectObject(hMemDC, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(hMemDC, RGB(0, 0, 0));   
-    Rectangle(hMemDC, 0, 0, w + 1, h + 1);      
-
-    SelectObject(hMemDC, GetStockObject(WHITE_BRUSH));    
-    ObjLoad("cow.object");
-    ObjDraw(hMemDC);
+    SelectObject(hMemDC, GetStockObject(BLACK_BRUSH));
+    Rectangle(hMemDC, 0, 0, w + 1, h + 1);  
+      
+    SelectObject(hMemDC, GetStockObject(WHITE_PEN));
+    SelectObject(hMemDC, GetStockObject(WHITE_BRUSH)); 
+    
+    ObjDraw(hMemDC, w, h);
     SelectObject(hMemDC, GetStockObject(NULL_BRUSH));
+    SelectObject(hMemDC, GetStockObject(NULL_PEN));
     InvalidateRect(hWnd, NULL, TRUE);
     return 0;  
 
   case WM_KEYDOWN:
     if (wParam = 'F')
       FlipFullScreen(hWnd); 
+    return 0;
 
    case WM_ERASEBKGND:
     BitBlt((HDC)wParam, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
