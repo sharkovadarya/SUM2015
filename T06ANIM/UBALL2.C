@@ -23,6 +23,18 @@ typedef struct tagds6UNIT_BALL
     ScaleShift; /* Масштаб времени */
 } ds6UNIT_BALL;
 
+/* Тип представления второго мяча */
+typedef struct tagds6UNIT_BALL2
+{
+  DS6_UNIT_BASE_FIELDS;
+
+  VEC Pos;     /* Позиция мяча */
+  DWORD Color; /* Цвет мяча */
+  DBL
+    ScaleShift, /* Масштаб времени */
+    Radius;     /* Circle that the ball moves around radius */
+} ds6UNIT_BALL2;
+
 /* Функция инициализации объекта анимации.
  * АРГУМЕНТЫ:
  *   - указатель на "себя" - сам объект анимации:
@@ -38,6 +50,22 @@ static VOID DS6_AnimUnitInit( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
   Uni->PhaseShift = rand() % 3000;
   Uni->ScaleShift = 5 + 0.30 * rand() / RAND_MAX;
   Uni->Amplitude = 30 + 59.0 * rand() / RAND_MAX;
+} /* End of 'DS6_AnimUnitInit' function */
+
+/* Функция инициализации объекта анимации.
+ * АРГУМЕНТЫ:
+ *   - указатель на "себя" - сам объект анимации:
+ *       ds6UNIT_BALL *Uni;
+ *   - указатель на контекст анимации:
+ *       ds6ANIM *Ani;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+ */
+static VOID DS6_AnimUnitInit2( ds6UNIT_BALL2 *Uni, ds6ANIM *Ani )
+{
+  Uni->Pos = VecSet(rand() % 1000, rand() % 700, 0);
+  Uni->Color = RGB(rand() % 256, rand() % 256, rand() % 256);  
+  Uni->ScaleShift = 5 + 0.30 * rand() / RAND_MAX;  
+  Uni->Radius = 228 +2.28 * rand() / 2.28;
 } /* End of 'DS6_AnimUnitInit' function */
 
 /* Функция деинициализации объекта анимации.
@@ -67,6 +95,21 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
   if (GetAsyncKeyState('F') & 0x8000)
     DS6_AnimFlipFullScreen();
 } /* End of 'DS6_AnimUnitResponse' function */
+/* Функция обновления межкадровых параметров объекта анимации.
+ * АРГУМЕНТЫ:
+ *   - указатель на "себя" - сам объект анимации:
+ *       ds6UNIT_BALL *Uni;
+ *   - указатель на контекст анимации:
+ *       ds6ANIM *Ani;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+ */
+static VOID DS6_AnimUnitResponse2( ds6UNIT_BALL2 *Uni, ds6ANIM *Ani )
+{
+  if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+    DS6_AnimDoExit();
+  if (GetAsyncKeyState('F') & 0x8000)
+    DS6_AnimFlipFullScreen();
+} /* End of 'DS6_AnimUnitResponse' function */
 
 /* Функция построения объекта анимации.
  * АРГУМЕНТЫ:
@@ -78,10 +121,20 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
 {
-  DBL shift = Uni->Amplitude * fabs(sin(Uni->ScaleShift * (DBL)clock() / CLOCKS_PER_SEC + Uni->PhaseShift));
+  DBL shift = Uni->Amplitude * fabs(sin(Uni->ScaleShift * (DBL)clock() / CLOCKS_PER_SEC + Uni->PhaseShift));   
 
   SetDCBrushColor(Ani->hDC, Uni->Color);
   Ellipse(Ani->hDC, Uni->Pos.X - 5, Uni->Pos.Y - 5 - shift, Uni->Pos.X + 5, Uni->Pos.Y + 5 - shift);
+} /* End of 'DS6_AnimUnitRender' function */
+
+static VOID DS6_AnimUnitRender2( ds6UNIT_BALL2 *Uni, ds6ANIM *Ani, INT X1, INT Y1 )
+{ 
+  DBL co = X1 / Uni->Radius, si = Y1 / Uni->Radius;  
+  DBL x = co * Uni->Radius, y = si * Uni->Radius;    
+
+  SetDCBrushColor(Ani->hDC, Uni->Color);
+  Ellipse(Ani->hDC, Uni->Pos.X - 5, Uni->Pos.Y  + x - 5, Uni->Pos.X + 5, y + Uni->Pos.Y + 5);
+
 } /* End of 'DS6_AnimUnitRender' function */
 
 /* Функция создания объекта анимации "мяч".
@@ -101,6 +154,6 @@ ds6UNIT * DS6_UnitBallCreate( VOID )
   Uni->Response = (VOID *)DS6_AnimUnitResponse;
   Uni->Render = (VOID *)DS6_AnimUnitRender;
   return (ds6UNIT *)Uni;
-} /* End of 'DS6_UnitBallCreate' function */
+} /* End of 'DS6_UnitBallCreate' function */ 
 
 /* END OF 'UBALL.C' FILE */

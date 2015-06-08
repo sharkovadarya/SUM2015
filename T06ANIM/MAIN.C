@@ -8,6 +8,8 @@
 #include <windows.h>
 #include "vec.h"
 #include "obj3d.h"
+#include "anim.h"
+#include "units.h"
 
 /* Имя класса окна */
 #define WND_CLASS_NAME "My window class"
@@ -138,6 +140,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 {
   HDC hDC;
   CREATESTRUCT *cs;
+  PAINTSTRUCT *ps;
   static HBITMAP hBm;
   static HDC hMemDC; 
   static INT w, h; 
@@ -147,7 +150,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   case WM_CREATE: 
     ObjLoad("cow.object"); 
     cs = (CREATESTRUCT *)lParam;     
-    SetTimer(hWnd, 111, 50, NULL);     
+    SetTimer(hWnd, 111, 50, NULL); 
+    DS6_AnimInit(hWnd);
     /* creating a context in memory */
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
@@ -167,6 +171,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     ReleaseDC(hWnd, hDC);
 
     SelectObject(hMemDC, hBm);
+    DS6_AnimResize(LOWORD(lParam), HIWORD(lParam));
+    DS6_AnimRender();
     SendMessage(hWnd, WM_TIMER, 111, 0);      
     return 0;
 
@@ -182,6 +188,8 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     ObjDraw(hMemDC, w, h);
     SelectObject(hMemDC, GetStockObject(NULL_BRUSH));
     SelectObject(hMemDC, GetStockObject(NULL_PEN));
+    DS6_AnimRender();
+    DS6_AnimCopyFrame();
     InvalidateRect(hWnd, NULL, TRUE);
     return 0;  
 
@@ -190,11 +198,18 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
       FlipFullScreen(hWnd); 
     return 0;
 
-   case WM_ERASEBKGND:
+  case WM_ERASEBKGND:
     BitBlt((HDC)wParam, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
     return 0;
 
+  case WM_PAINT:
+    hDC = BeginPaint(hWnd, &ps);
+    EndPaint(hWnd, &ps);
+    VG4_AnimCopyFrame();
+    return 0;     
+
   case WM_DESTROY:
+    DS6_AnimClose();
     DeleteDC(hMemDC);
     DeleteObject(hBm);
     KillTimer(hWnd, 111);
