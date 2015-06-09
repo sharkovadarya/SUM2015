@@ -183,7 +183,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MAIN2.C"
+				RelativePath=".\MAIN.C"
 				>
 			</File>
 			<Filter
@@ -206,15 +206,11 @@
 				Name="Units"
 				>
 				<File
-					RelativePath=".\UBALL.C"
+					RelativePath=".\UCOW.C"
 					>
 				</File>
 				<File
 					RelativePath=".\UNITS.H"
-					>
-				</File>
-				<File
-					RelativePath=".\UTRIANGLE.C"
 					>
 				</File>
 			</Filter>

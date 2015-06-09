@@ -77,7 +77,6 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   for (i = 0; i < 30; i++)
   {
     DS6_AnimAddUnit(DS6_UnitBallCreate());
-    DS6_AnimAddUnit(DS6_UnitTriangleCreate());
   }
 
   /* Запуск цикла обработки сообщений */

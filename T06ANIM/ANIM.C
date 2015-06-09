@@ -106,6 +106,7 @@ VOID DS6_AnimResize( INT W, INT H )
   /* Сохранение размера */
   DS6_Anim.W = W;
   DS6_Anim.H = H;
+  DS6_Anim.NumOfUnits = 0;
 
   ReleaseDC(DS6_Anim.hWnd, hDC);
 } /* End of 'DS6_AnimResize' function */
@@ -163,12 +164,7 @@ VOID DS6_AnimRender( VOID )
 
   /* рисование объектов */
   for (i = 0; i < DS6_Anim.NumOfUnits; i++)
-  {
-    SelectObject(DS6_Anim.hDC, GetStockObject(DC_BRUSH));
-    SelectObject(DS6_Anim.hDC, GetStockObject(DC_PEN));
-    SetDCBrushColor(DS6_Anim.hDC, RGB(255, 255, 255));
-    SetDCPenColor(DS6_Anim.hDC, RGB(0, 0, 0));
-
+  {     
     DS6_Anim.Units[i]->Render(DS6_Anim.Units[i], &DS6_Anim);
   }
 } /* End of 'DS6_AnimRender' function */

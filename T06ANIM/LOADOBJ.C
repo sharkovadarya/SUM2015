@@ -78,7 +78,6 @@ VOID ObjDraw( HDC hDC, INT W, INT H )
 {
   INT i;
 
-  SelectObject(hDC, GetStockObject(WHITE_BRUSH));
   for (i = 0; i < ObjNumOfV; i++)
     Ellipse(hDC, W / 2 + ObjV[i].X - 5, H / 2 - ObjV[i].Y - 5, W / 2 + ObjV[i].X + 5, H / 2 - ObjV[i].Y + 5); 
 

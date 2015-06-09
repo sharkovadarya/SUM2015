@@ -16,7 +16,6 @@
  *   (ds6UNIT *) указатель на созданный объект анимации.
  */
 ds6UNIT * DS6_UnitBallCreate( VOID );
-ds6UNIT * DS6_UnitTriangleCreate( VOID );
 
 #endif /* __UNITS_H_ */
 

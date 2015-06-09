@@ -1,7 +1,7 @@
 /* FILE: MAIN.C
  * PROGRAMMER: DS6
- * DATE: 06.06.2015
- * PURPOSE: test the functions from the newly added library.
+ * LAST UPDATE: 09.06.2015
+ * PURPOSE: output a cow and other animation.
 */
 #pragma warning(disable: 4244) 
 
@@ -18,7 +18,7 @@
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
 
-VOID FlipFullScreen( HWND hWnd ) 
+/*VOID FlipFullScreen( HWND hWnd ) 
 {
   static BOOL IsFullScreen = FALSE;
   static RECT SaveRC;
@@ -49,7 +49,7 @@ VOID FlipFullScreen( HWND hWnd )
     IsFullScreen = FALSE;
   }      
 
-} 
+} */
 
 
 /* Главная функция программы.
@@ -110,6 +110,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   ShowWindow(hWnd, ShowCmd);
   UpdateWindow(hWnd);
 
+  DS6_AnimAddUnit(DS6_UnitBallCreate());
+
   /* Запуск цикла сообщений окна */
   while (GetMessage(&msg, NULL, 0, 0))
   {
@@ -140,7 +142,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 {
   HDC hDC;
   CREATESTRUCT *cs;
-  PAINTSTRUCT *ps;
+  PAINTSTRUCT ps;
   static HBITMAP hBm;
   static HDC hMemDC; 
   static INT w, h; 
@@ -148,70 +150,33 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
   switch (Msg)
   {
   case WM_CREATE: 
-    ObjLoad("cow.object"); 
+    /*ObjLoad("cow.object"); */
     cs = (CREATESTRUCT *)lParam;     
     SetTimer(hWnd, 111, 50, NULL); 
-    DS6_AnimInit(hWnd);
-    /* creating a context in memory */
-    hDC = GetDC(hWnd);
-    hMemDC = CreateCompatibleDC(hDC);
-    ReleaseDC(hWnd, hDC);
-
+    DS6_AnimInit(hWnd); 
     return 0;
 
-  case WM_SIZE:
-    w = LOWORD(lParam);
-    h = HIWORD(lParam);
-
-    if (hBm != NULL)
-      DeleteObject(hBm);
-          
-    hDC = GetDC(hWnd);                                                                            
-    hBm = CreateCompatibleBitmap(hDC, w, h);     
-    ReleaseDC(hWnd, hDC);
-
-    SelectObject(hMemDC, hBm);
+  case WM_SIZE:   
     DS6_AnimResize(LOWORD(lParam), HIWORD(lParam));
-    DS6_AnimRender();
-    SendMessage(hWnd, WM_TIMER, 111, 0);      
+    DS6_AnimRender();  
     return 0;
 
-  case WM_TIMER:      
-    /* Clear Background */
-    SelectObject(hMemDC, GetStockObject(NULL_PEN));
-    SelectObject(hMemDC, GetStockObject(BLACK_BRUSH));
-    Rectangle(hMemDC, 0, 0, w + 1, h + 1);  
-      
-    SelectObject(hMemDC, GetStockObject(WHITE_PEN));
-    SelectObject(hMemDC, GetStockObject(WHITE_BRUSH)); 
-    
-    ObjDraw(hMemDC, w, h);
-    SelectObject(hMemDC, GetStockObject(NULL_BRUSH));
-    SelectObject(hMemDC, GetStockObject(NULL_PEN));
+  case WM_TIMER:    
     DS6_AnimRender();
     DS6_AnimCopyFrame();
-    InvalidateRect(hWnd, NULL, TRUE);
-    return 0;  
+    return 0; 
 
-  case WM_KEYDOWN:
-    if (wParam = 'F')
-      FlipFullScreen(hWnd); 
-    return 0;
-
-  case WM_ERASEBKGND:
-    BitBlt((HDC)wParam, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
-    return 0;
+  case WM_ERASEBKGND:    
+    return 1;
 
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
     EndPaint(hWnd, &ps);
-    VG4_AnimCopyFrame();
+    DS6_AnimCopyFrame();
     return 0;     
 
   case WM_DESTROY:
-    DS6_AnimClose();
-    DeleteDC(hMemDC);
-    DeleteObject(hBm);
+    DS6_AnimClose();   
     KillTimer(hWnd, 111);
     PostQuitMessage(0);
     return 0;
