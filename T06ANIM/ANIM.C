@@ -3,10 +3,18 @@
  * PURPOSE: Animation system module.
  * LAST UPDATE: 08.06.2015
  */
-
-#include <stdio.h>
 #include "anim.h"
+#include <stdio.h>  
+#include <mmsystem.h>
+#pragma comment(lib, "winmm")
 
+/* Получение значения оси джойстика */
+#define DS6_GET_AXIS_VALUE(Axis) \
+  (2.0 * (ji.dw ## Axis ## pos - jc.w ## Axis ## min) / (jc.w ## Axis ## max - jc.w ## Axis ## min) - 1.0)
+
+/* Сохраненные координаты мыши */
+static INT
+  DS6_MouseOldX, DS6_MouseOldY;
 
 /* Системный контекст анимации */
 static ds6ANIM DS6_Anim;
@@ -52,6 +60,7 @@ VOID DS6_AnimInit( HWND hWnd )
   DS6_Anim.IsPause = FALSE;
   FrameCounter = 0;
 
+  memset(&DS6_Anim, 0, sizeof(ds6ANIM));
   DS6_Anim.hWnd = hWnd;
   /* Инициализируем буфер кадра */
   DS6_Anim.hDC = CreateCompatibleDC(hDC);
@@ -138,9 +147,6 @@ VOID DS6_AnimRender( VOID )
   if (li.QuadPart - TimeFPS > TimeFreq)
   {
     static CHAR Buf[100];
-
-    sprintf(Buf, "FPS: %.5f", DS6_Anim.FPS);
-    SetWindowText(DS6_Anim.hWnd, Buf);
 
     DS6_Anim.FPS = FrameCounter / ((DBL)(li.QuadPart - TimeFPS) / TimeFreq);
     TimeFPS = li.QuadPart;

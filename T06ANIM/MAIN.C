@@ -14,6 +14,8 @@
 /* Имя класса окна */
 #define WND_CLASS_NAME "My window class"
 
+INT DS6_MouseWheel;
+
 /* Ссылка вперед */
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
@@ -67,6 +69,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     CHAR *CmdLine, INT ShowCmd )
 {
+  INT i;
   WNDCLASS wc;
   HWND hWnd;
   MSG msg;
@@ -110,7 +113,9 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   ShowWindow(hWnd, ShowCmd);
   UpdateWindow(hWnd);
 
-  DS6_AnimAddUnit(DS6_UnitBallCreate());
+  for (i = 0; i < 5; i++)
+    DS6_AnimAddUnit(DS6_UnitBallCreate());
+  DS6_AnimAddUnit(DS6_UnitControlCreate());
 
   /* Запуск цикла сообщений окна */
   while (GetMessage(&msg, NULL, 0, 0))
@@ -165,6 +170,10 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
     DS6_AnimRender();
     DS6_AnimCopyFrame();
     return 0; 
+
+  case WM_MOUSEWHEEL:
+    DS6_MouseWheel += (SHORT)HIWORD(wParam) / WHEEL_DELTA;
+    return 0;
 
   case WM_ERASEBKGND:    
     return 1;

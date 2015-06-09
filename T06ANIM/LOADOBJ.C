@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
+#include <math.h>
+#include <time.h>
 
 #include "vec.h"
 
@@ -16,7 +18,8 @@
 
 /* Vertex array */
 VEC *ObjV; /* Vertex coordinates */
-INT ObjNumOfV; /* Number of model vertices */     
+INT ObjNumOfV; /* Number of model vertices */   
+
 
 
 /* Draw object functioln.
@@ -76,10 +79,13 @@ BOOL ObjLoad( CHAR *FileName )
  */
 VOID ObjDraw( HDC hDC, INT W, INT H )
 {
-  INT i;
+  INT i;  
 
-  for (i = 0; i < ObjNumOfV; i++)
+  for (i = 0; i < ObjNumOfV; i++)                            
+  {
+    ObjV[i] = VectorTransform(ObjV[i], MatrMulMatr(MatrRotate(sin(clock() / (DBL)(CLOCKS_PER_SEC)) * 2, 2, 2, 8), MatrRotate(2, 2, rand() / 5, 0)));    
     Ellipse(hDC, W / 2 + ObjV[i].X - 5, H / 2 - ObjV[i].Y - 5, W / 2 + ObjV[i].X + 5, H / 2 - ObjV[i].Y + 5); 
+  }
 
 } /* End of 'ObjDraw' function */
 

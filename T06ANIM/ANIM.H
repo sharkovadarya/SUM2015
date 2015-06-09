@@ -1,4 +1,4 @@
-                                                                               /* FILENAME: ANIM.H
+/* FILENAME: ANIM.H
  * PROGRAMMER: DS6
  * PURPOSE: Animation system declaration module.
  * LAST UPDATE: 08.06.2015
@@ -22,8 +22,28 @@ typedef struct
   INT W, H;           /* Размер окна вывода */
   HBITMAP hBmFrame;   /* Буфер кадра */
   HDC hDC;            /* Контекст вывода */
-  BOOL IsPause; 
-  DBL GlobalTime, GlobalDeltaTime, DeltaTime, Time, FPS;
+  BOOL IsPause;       /* Проверка на паузу */
+  DBL GlobalTime, 
+      GlobalDeltaTime, 
+      DeltaTime, 
+      Time, 
+      FPS;
+  /* Подсистема ввода */
+  BYTE
+    Keys[256],       /* Состояние клавиш клавиатуры и мыши */
+    KeysOld[256],    /* Состояние клавиш на предыдущем кадре */
+    KeysClick[256];  /* Флаги однократного нажатия */
+  INT
+    MsDeltaX, MsDeltaY, /* Относительные координаты курсора мыши */
+    MsX, MsY,        /* Абсолютные координаты курсора мыши */
+    MsWheel;         /* Состояние колеса мыши */
+  BYTE
+    JButs[32],       /* Состояние кнопок джойстика */
+    JButsOld[32],    /* Состояние кнопок джойстика на предыдущем кадре */
+    JButsClick[32],  /* Флаги однократного нажатия кнопок джойстика */
+    JPOV;            /* Переключатель POV - 0..8 */
+  DBL
+    JX, JY, JZ, JR, JU, JV; /* Оси джойстика (-1.0 .. 1.0*/
 
   /* Массив элементов анимации и их количество */
   ds6UNIT *Units[DS6_MAX_UNITS]; 
@@ -121,6 +141,10 @@ ds6UNIT * DS6_AnimUnitCreate( INT Size );
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
 VOID DS6_AnimDoExit( VOID );
+VOID DS6_AnimSetPause( BOOL NewPauseFlag );
+
+extern INT DS6_MouseWheel;
+
 
 #endif /* __ANIM_H_ */
 

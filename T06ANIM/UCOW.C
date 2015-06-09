@@ -5,9 +5,10 @@
  */
 
 #include <string.h> 
+#include <time.h>
 #include "anim.h"
 #include "vec.h"
-#include "obj3d.h"
+#include "render.h"
 
 /* BALL image type */
 typedef struct tagds6UNIT_BALL
@@ -15,7 +16,11 @@ typedef struct tagds6UNIT_BALL
   DS6_UNIT_BASE_FIELDS;
     
   DWORD Color; /* Cow color */
-  VEC Pos;     /* Cow position */  
+  VEC Pos;     /* Cow position */ 
+  DBL
+    Amplitude,  /* Амплитуда */
+    PhaseShift, /* Сдвиг по фазе */
+    ScaleShift;  
 } ds6UNIT_BALL;
 
 /* Animation object initialization function.
@@ -27,11 +32,13 @@ typedef struct tagds6UNIT_BALL
  * RETURNS: none.
  */
 static VOID DS6_AnimUnitInit( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
-{
-  
+{   
   Uni->Color = RGB(rand() % 256, rand() % 256, rand() % 256);  
-  Uni->Pos = VecSet(Ani->W + rand() / 228, Ani->H + rand() / 228, 0); 
-  ObjLoad("cow.object");
+  Uni->Pos = VecSet(Ani->W + rand() / RAND_MAX, Ani->H + rand() / RAND_MAX, 0); 
+  Uni->PhaseShift = rand() % 3000;
+  Uni->ScaleShift = 5 + 0.30 * rand() / RAND_MAX;
+  Uni->Amplitude = 30 + 59.0 * rand() / RAND_MAX;
+  DS6_RndGObjLoad("cow.object");
 } /* End of 'DS6_AnimUnitInit' function */
 
 /* Animation object deinitialization function.
@@ -56,10 +63,6 @@ static VOID DS6_AnimUnitClose( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
  */
 static VOID DS6_AnimUnitResponse( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
 {
-  if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-    DS6_AnimDoExit();
-  if (GetAsyncKeyState('F') & 0x8000)
-    DS6_AnimFlipFullScreen();
 } /* End of 'DS6_AnimUnitResponse' function */
 
 /* Функция построения объекта анимации.
@@ -72,8 +75,11 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_BALL *Uni, ds6ANIM *Ani )
 {
-  SetDCBrushColor(Ani->hDC, Uni->Color);
-  ObjDraw(Ani->hDC, Uni->Pos.X, Uni->Pos.Y);  
+  DBL shift = Uni->Amplitude * fabs(sin(Uni->ScaleShift * (DBL)clock() / CLOCKS_PER_SEC + Uni->PhaseShift));
+  
+  SetDCBrushColor(Ani->hDC, Uni->Color);  
+  DS6_RndGObjDraw(Ani->hDC, Uni->Pos.X + shift, Uni->Pos.Y + shift);  
+  
 } /* End of 'DS6_AnimUnitRender' function */
 
 /* Функция создания объекта анимации "мяч".

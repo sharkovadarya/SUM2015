@@ -186,6 +186,10 @@
 				RelativePath=".\MAIN.C"
 				>
 			</File>
+			<File
+				RelativePath=".\UCTRL.C"
+				>
+			</File>
 			<Filter
 				Name="Animation System"
 				>
@@ -201,6 +205,18 @@
 					RelativePath=".\UNIT.C"
 					>
 				</File>
+				<Filter
+					Name="Rendering"
+					>
+					<File
+						RelativePath=".\RENDER.C"
+						>
+					</File>
+					<File
+						RelativePath=".\RENDER.H"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Units"
@@ -223,14 +239,6 @@
 				</File>
 				<File
 					RelativePath=".\IMAGE.H"
-					>
-				</File>
-				<File
-					RelativePath=".\LOADOBJ.C"
-					>
-				</File>
-				<File
-					RelativePath=".\OBJ3D.h"
 					>
 				</File>
 				<File
