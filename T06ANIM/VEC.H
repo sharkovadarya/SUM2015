@@ -180,9 +180,9 @@ __inline MATR MatrRotateY( DBL AngleDegree )
     fstp cosine /* cos -> cosine */
     fstp sine   /* sin -> sine */
   }
-  M.A[0][0] =  M.A[3][3] = cosine;
-  M.A[3][1] = sine;
-  M.A[1][3] = -sine;
+  M.A[0][0] =  M.A[2][2] = cosine;
+  M.A[2][0] = sine;
+  M.A[0][2] = -sine;
   return M;
 }  
 
@@ -273,8 +273,6 @@ __inline MATR MatrInverse( MATR M )
 
   return r;
 }
-
-
 
 /* vector functions */
 
@@ -428,6 +426,43 @@ __inline VEC VecRotateZ( VEC V, DBL AngleDegree )
   V.X = tmp;
   return V;
 } /* End of 'VecRotateZ' function */
+
+/* matrix 2 */
+__inline MATR MatrView( VEC Loc, VEC At, VEC Up1 )
+{
+  VEC
+    Dir = VecNormalize(VecSubVec(At, Loc)),
+    Right = VecNormalize(VecCrossVec(Dir, Up1)),
+    Up = VecNormalize(VecCrossVec(Right, Dir));
+  MATR m =
+  {
+    {
+      {               Right.X,                Up.X,              -Dir.X, 0},
+      {               Right.Y,                Up.Y,              -Dir.Y, 0},
+      {               Right.Z,                Up.Z,              -Dir.X, 0},
+      {-VecDotVec(Loc, Right), -VecDotVec(Loc, Up), VecDotVec(Loc, Dir), 1}
+    }
+  };
+
+  return m;
+} /* End of 'MatrView' function */
+
+__inline MATR MatrFrustum( DBL Left, DBL Right, DBL Top, DBL Bottom, DBL Near, DBL Far )
+{
+  MATR m =
+  {
+    {
+      {      2 * Near / (Right - Left),                               0,                              0,  0},
+      {                              0,       2 * Near / (Top - Bottom),                              0,  0},
+      {(Right + Left) / (Right - Left), (Top + Bottom) / (Top - Bottom),   -(Far + Near) / (Far - Near), -1},
+      {                              0,                               0, -2 * Near * Far / (Far - Near),  0}
+    }
+  };
+
+  return m;
+} /* End of 'MatrView' function */
+
+
 
 
 #endif /*__VEC_H_*/

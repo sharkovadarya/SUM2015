@@ -114,7 +114,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   UpdateWindow(hWnd);
 
   for (i = 0; i < 5; i++)
-    DS6_AnimAddUnit(DS6_UnitCowCreate());
+    DS6_AnimAddUnit(DS6_UnitModelCreate());
   DS6_AnimAddUnit(DS6_UnitControlCreate());
 
   /* Запуск цикла сообщений окна */

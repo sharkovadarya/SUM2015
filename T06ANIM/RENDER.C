@@ -1,13 +1,12 @@
 /* FILE: RENDER.C
  * PROGRAMMER: DS6
  * LAST UPDATE: 10.06.2015
- * PURPOSE: render stuff. 
+ * PURPOSE: Rendering system module. 
  */
 
 #include <stdio.h>
 #include <string.h>
 
-#include "vec.h"
 #include "anim.h"
 #include "render.h"
 
@@ -36,7 +35,7 @@ POINT DS6_RndWorldToScreen( VEC P )
   VEC Pp;
 
   /* преобразование СК */
-  P = VectorTransform(P, DS6_RndMatrWorldView);
+  P = PointTransform(P, DS6_RndMatrWorldView);
 
   Pp.X = P.X * DS6_RndProjDist / (- P.Z);
   Pp.Y = P.Y * DS6_RndProjDist / (- P.Z);

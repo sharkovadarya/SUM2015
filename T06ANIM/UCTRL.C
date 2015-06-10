@@ -4,11 +4,9 @@
  * LAST UPDATE: 10.06.2015
  */
 
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h>  
 
-#include "anim.h"
-#include "vec.h"
+#include "anim.h" 
 
 /* Тип структуры контроля */
 typedef struct tagds6UNIT_CTRL

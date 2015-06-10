@@ -64,8 +64,6 @@ VOID DS6_RndGObjFree( ds6GOBJ *GObj );
  */
 VOID DS6_RndGObjDraw( ds6GOBJ *GObj );
 
-#endif /* __RENDER_H_ */
-
-
+#endif /* __RENDER_H_ */    
 
 /* END OF 'RENDER.H' FILE */

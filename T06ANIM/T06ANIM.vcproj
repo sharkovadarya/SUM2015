@@ -222,7 +222,7 @@
 				Name="Units"
 				>
 				<File
-					RelativePath=".\UCOW.C"
+					RelativePath=".\UMODEL.C"
 					>
 				</File>
 				<File

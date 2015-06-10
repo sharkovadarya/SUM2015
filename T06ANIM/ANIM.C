@@ -52,14 +52,9 @@ VOID DS6_AnimInit( HWND hWnd )
 {
   HDC hDC = GetDC(hWnd);
   LARGE_INTEGER li;
+  POINT pt;
 
-  /* Инициализация таймера */
-  QueryPerformanceFrequency(&li);
-  TimeFreq = li.QuadPart;
-  QueryPerformanceCounter(&li);
-  TimeStart = TimeOld = TimeFPS = li.QuadPart;
-  DS6_Anim.IsPause = FALSE;
-  FrameCounter = 0;
+ 
 
   memset(&DS6_Anim, 0, sizeof(ds6ANIM));
   DS6_Anim.hWnd = hWnd;
@@ -68,13 +63,25 @@ VOID DS6_AnimInit( HWND hWnd )
   DS6_Anim.hBmFrame = CreateCompatibleBitmap(hDC, 30, 30);
   SelectObject(DS6_Anim.hDC, DS6_Anim.hBmFrame);
   DS6_Anim.W = 30;
-  DS6_Anim.H = 30;
+  DS6_Anim.H = 30;             
   DS6_Anim.NumOfUnits = 0;
   ReleaseDC(hWnd, hDC);
 
-  /* Инициализация таймера */
+   /* Инициализация таймера */
   QueryPerformanceFrequency(&li);
+  TimeFreq = li.QuadPart;
   QueryPerformanceCounter(&li);
+  TimeStart = TimeOld = TimeFPS = li.QuadPart;
+  DS6_Anim.IsPause = FALSE;
+  FrameCounter = 0;
+
+   /* Инициализация ввода */
+  GetCursorPos(&pt);
+  ScreenToClient(DS6_Anim.hWnd, &pt);
+  DS6_MouseOldX = pt.x;
+  DS6_MouseOldY = pt.y;
+  GetKeyboardState(DS6_Anim.KeysOld);  
+
 } /* End of 'DS6_AnimInit' function */
 
 /* Функция деинициализации анимации.
@@ -119,6 +126,13 @@ VOID DS6_AnimResize( INT W, INT H )
   DS6_Anim.NumOfUnits = 0;
 
   ReleaseDC(DS6_Anim.hWnd, hDC);
+
+  /* projection parametres correction */
+  if (W > H)
+    DS6_RndWp = (DBL)W / H * 3, DS6_RndHp = 3;
+  else
+    DS6_RndHp = (DBL)H / W * 3, DS6_RndWp = 3;
+
 } /* End of 'DS6_AnimResize' function */
 
 /* Функция построения кадра анимации.
@@ -156,10 +170,7 @@ VOID DS6_AnimRender( VOID )
   }
 
   /* время "прошлого" кадра */
-  TimeOld = li.QuadPart;
-
-  FrameCounter++;
-
+  TimeOld = li.QuadPart; 
 
   /* очистка фона */
   SelectObject(DS6_Anim.hDC, GetStockObject(DC_BRUSH));
@@ -167,7 +178,8 @@ VOID DS6_AnimRender( VOID )
   SetDCBrushColor(DS6_Anim.hDC, RGB(0, 0, 0));
   Rectangle(DS6_Anim.hDC, 0, 0, DS6_Anim.W + 1, DS6_Anim.H + 1);
 
-  /* keyboard and mouse and gamepad control */
+  /* input update */
+  /* keyboard */
   GetKeyboardState(DS6_Anim.Keys);
   for (i = 0; i < 256; i++)
     DS6_Anim.Keys[i] >>= 7;
@@ -196,14 +208,14 @@ VOID DS6_AnimRender( VOID )
     JOYCAPS jc;
 
     /* получение общей информации о джостике */
-    if (joyGetDevCaps(JOYSTICKID2, &jc, sizeof(jc)) == JOYERR_NOERROR)
+    if (joyGetDevCaps(JOYSTICKID1, &jc, sizeof(jc)) == JOYERR_NOERROR)
     {
       JOYINFOEX ji;
 
       /* получение текущего состояния */
       ji.dwSize = sizeof(JOYCAPS);
       ji.dwFlags = JOY_RETURNALL;
-      if (joyGetPosEx(JOYSTICKID2, &ji) == JOYERR_NOERROR)
+      if (joyGetPosEx(JOYSTICKID1, &ji) == JOYERR_NOERROR)
       {
         /* Кнопки */
         memcpy(DS6_Anim.JButsOld, DS6_Anim.JButs, sizeof(DS6_Anim.JButs));
@@ -241,11 +253,15 @@ VOID DS6_AnimRender( VOID )
     DS6_Anim.Units[i]->Response(DS6_Anim.Units[i], &DS6_Anim);
 
   /* рисование объектов */
-  SelectObject(DS6_Anim.hDC, GetStockObject(WHITE_PEN));   
+  
   for (i = 0; i < DS6_Anim.NumOfUnits; i++)
   {     
+    SelectObject(DS6_Anim.hDC, GetStockObject(WHITE_PEN));   
+
+    DS6_RndMatrWorld = MatrIdentity();
     DS6_Anim.Units[i]->Render(DS6_Anim.Units[i], &DS6_Anim);
-  }
+  }                
+  FrameCounter++;
 } /* End of 'DS6_AnimRender' function */
 
 /* Функция вывода кадра анимации.

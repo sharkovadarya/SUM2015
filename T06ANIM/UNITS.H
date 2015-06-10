@@ -15,7 +15,7 @@
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
  *   (ds6UNIT *) указатель на созданный объект анимации.
  */
-ds6UNIT * DS6_UnitCowCreate( VOID );
+ds6UNIT * DS6_UnitModelCreate( VOID );
 ds6UNIT * DS6_UnitControlCreate( VOID );
 
 #endif /* __UNITS_H_ */

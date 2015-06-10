@@ -8,6 +8,7 @@
 #define __ANIM_H_
 
 #include "def.h"
+#include "render.h"
 
 /* Максимальное количество элементов анимации */
 #define DS6_MAX_UNITS 3000
