@@ -51,6 +51,8 @@ typedef struct
 
 } ds6ANIM;
 
+extern ds6ANIM DS6_Anim;
+
 /* Базовые поля объекта анимации:
  * - размер структуры для наследования
  *     INT Size;
@@ -141,6 +143,13 @@ ds6UNIT * DS6_AnimUnitCreate( INT Size );
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
 VOID DS6_AnimDoExit( VOID );
+
+/* Set pause function.
+ * ARGUMENTS: 
+ *   - pause flag:
+ *       BOOL NewPAuseFlag;
+ * RETURNS: none.
+ */  
 VOID DS6_AnimSetPause( BOOL NewPauseFlag );
 
 extern INT DS6_MouseWheel;

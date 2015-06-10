@@ -1,6 +1,6 @@
 /* FILE: RENDER.C
  * PROGRAMMER: DS6
- * DATE: 09.06.2015
+ * LAST UPDATE: 10.06.2015
  * PURPOSE: render stuff. 
  */
 
@@ -36,10 +36,10 @@ POINT DS6_RndWorldToScreen( VEC P )
   VEC Pp;
 
   /* ïðåîáðàçîâàíèå ÑÊ */
-  P = VecMulMatr(P, DS6_RndMatrWorldView);
+  P = VectorTransform(P, DS6_RndMatrWorldView);
 
-  Pp.X = P.X * DS6_RndProjDist / P.Z;
-  Pp.Y = P.Y * DS6_RndProjDist / P.Z;
+  Pp.X = P.X * DS6_RndProjDist / (- P.Z);
+  Pp.Y = P.Y * DS6_RndProjDist / (- P.Z);
 
   Ps.x = DS6_Anim.W / 2 + Pp.X * DS6_Anim.W / DS6_RndWp;
   Ps.y = DS6_Anim.H / 2 - Pp.Y * DS6_Anim.H / DS6_RndHp;
@@ -57,13 +57,13 @@ POINT DS6_RndWorldToScreen( VEC P )
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ:
  *   (BOOL) TRUE ïðè óñïåõå, FALSE èíà÷å.
  */
-BOOL DS6_RndGObjLoad( DS6GOBJ *GObj, CHAR *FileName )
+BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
 {
   FILE *F;
   INT nv = 0, nf = 0;
   static CHAR Buf[10000];
 
-  memset(GObj, 0, sizeof(DS6GOBJ));
+  memset(GObj, 0, sizeof(ds6GOBJ));
   /* Open file */
   if ((F = fopen(FileName, "r")) == NULL)
     return FALSE;
@@ -125,7 +125,7 @@ BOOL DS6_RndGObjLoad( DS6GOBJ *GObj, CHAR *FileName )
  *       DS6GOBJ *GObj;
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
  */
-VOID DS6_RndGObjDraw( DS6GOBJ *GObj )
+VOID DS6_RndGObjDraw( ds6GOBJ *GObj )
 {
   INT i;
   POINT *pnts;
@@ -161,10 +161,10 @@ VOID DS6_RndGObjDraw( DS6GOBJ *GObj )
  *       DS6GOBJ *GObj;
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
  */
-VOID DS6_RndGObjFree( DS6GOBJ *GObj )
+VOID DS6_RndGObjFree( ds6GOBJ *GObj )
 {
   free(GObj->V);
-  memset(GObj, 0, sizeof(DS6GOBJ));
+  memset(GObj, 0, sizeof(ds6GOBJ));
 } /* End of 'DS6_RndGObjFree' function */
 
 

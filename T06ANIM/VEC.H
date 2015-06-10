@@ -30,6 +30,17 @@ typedef struct tagMATR
   DBL A[4][4];
 } MATR;
 
+#define DS6_UNIT_MATR \
+{                 \
+  {               \
+    {1, 0, 0, 0}, \
+    {0, 1, 0, 0}, \
+    {0, 0, 1, 0}, \
+    {0, 0, 0, 1}  \
+  }               \
+}
+
+
 /* matrix functions */ 
 
 /* create an identity matrix */

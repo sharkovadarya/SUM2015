@@ -20,13 +20,13 @@ typedef struct tagds6GOBJ
 
 /* Матрицы */
 extern MATR
-  ds6_RndMatrWorld,
-  ds6_RndMatrView;
+  DS6_RndMatrWorld,
+  DS6_RndMatrView;
 
 /* Параметры проецирования */
 extern DBL
-  ds6_RndWp, ds6_RndHp,    /* размеры обрасти проецирования */
-  ds6_RndProjDist;         /* расстояние до плоскости проекции */
+  DS6_RndWp, DS6_RndHp,    /* размеры обрасти проецирования */
+  DS6_RndProjDist;         /* расстояние до плоскости проекции */
 
 /* Функция преобразования из мировой системы координат в кадр.
  * АРГУМЕНТЫ:
@@ -35,7 +35,7 @@ extern DBL
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
  *   (POINT) координаты в кадре.
  */
-POINT ds6_RndWorldToScreen( VEC P );
+POINT DS6_RndWorldToScreen( VEC P );
 
 /* Функция загрузки геометрического объекта.
  * АРГУМЕНТЫ:
@@ -46,7 +46,7 @@ POINT ds6_RndWorldToScreen( VEC P );
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
  *   (BOOL) TRUE при успехе, FALSE иначе.
  */
-BOOL ds6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName );
+BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName );
 
 /* Функция освобождения памяти из-под геометрического объекта.
  * АРГУМЕНТЫ:
@@ -54,7 +54,7 @@ BOOL ds6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName );
  *       ds6GOBJ *GObj;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
-VOID ds6_RndGObjFree( ds6GOBJ *GObj );
+VOID DS6_RndGObjFree( ds6GOBJ *GObj );
 
 /* Функция отрисовки геометрического объекта.
  * АРГУМЕНТЫ:
@@ -62,7 +62,7 @@ VOID ds6_RndGObjFree( ds6GOBJ *GObj );
  *       ds6GOBJ *GObj;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
-VOID ds6_RndGObjDraw( ds6GOBJ *GObj );
+VOID DS6_RndGObjDraw( ds6GOBJ *GObj );
 
 #endif /* __RENDER_H_ */
 

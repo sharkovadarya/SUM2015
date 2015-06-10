@@ -1,7 +1,7 @@
 /* FILENAME: ANIM.C
  * PROGRAMMER: DS6
  * PURPOSE: Animation system module.
- * LAST UPDATE: 08.06.2015
+ * LAST UPDATE: 10.06.2015
  */
 #include "anim.h"
 #include <stdio.h>  
@@ -17,7 +17,8 @@ static INT
   DS6_MouseOldX, DS6_MouseOldY;
 
 /* Системный контекст анимации */
-static ds6ANIM DS6_Anim;
+ds6ANIM DS6_Anim;
+
 static INT64
   TimeFreq,  /* единиц измерения в секунду */
   TimeStart, /* время начала анимации */
@@ -64,10 +65,10 @@ VOID DS6_AnimInit( HWND hWnd )
   DS6_Anim.hWnd = hWnd;
   /* Инициализируем буфер кадра */
   DS6_Anim.hDC = CreateCompatibleDC(hDC);
-  DS6_Anim.hBmFrame = CreateCompatibleBitmap(hDC, 300, 300);
+  DS6_Anim.hBmFrame = CreateCompatibleBitmap(hDC, 30, 30);
   SelectObject(DS6_Anim.hDC, DS6_Anim.hBmFrame);
-  DS6_Anim.W = 1000;
-  DS6_Anim.H = 1000;
+  DS6_Anim.W = 30;
+  DS6_Anim.H = 30;
   DS6_Anim.NumOfUnits = 0;
   ReleaseDC(hWnd, hDC);
 
@@ -128,6 +129,7 @@ VOID DS6_AnimRender( VOID )
 {
   INT i;
   LARGE_INTEGER li;
+  POINT pt;
 
   QueryPerformanceCounter(&li);
   DS6_Anim.GlobalTime = (DBL)(li.QuadPart - TimeStart) / TimeFreq;
@@ -158,9 +160,6 @@ VOID DS6_AnimRender( VOID )
 
   FrameCounter++;
 
-  /* опрос на изменение состояний объектов */
-  for (i = 0; i < DS6_Anim.NumOfUnits; i++)
-    DS6_Anim.Units[i]->Response(DS6_Anim.Units[i], &DS6_Anim);
 
   /* очистка фона */
   SelectObject(DS6_Anim.hDC, GetStockObject(DC_BRUSH));
@@ -168,7 +167,81 @@ VOID DS6_AnimRender( VOID )
   SetDCBrushColor(DS6_Anim.hDC, RGB(0, 0, 0));
   Rectangle(DS6_Anim.hDC, 0, 0, DS6_Anim.W + 1, DS6_Anim.H + 1);
 
+  /* keyboard and mouse and gamepad control */
+  GetKeyboardState(DS6_Anim.Keys);
+  for (i = 0; i < 256; i++)
+    DS6_Anim.Keys[i] >>= 7;
+  for (i = 0; i < 256; i++)
+    DS6_Anim.KeysClick[i] = DS6_Anim.Keys[i] && !DS6_Anim.KeysOld[i];
+  memcpy(DS6_Anim.KeysOld, DS6_Anim.Keys, sizeof(DS6_Anim.KeysOld));
+
+  /* Мышь */
+  /* колесо */
+  DS6_Anim.MsWheel = DS6_MouseWheel;
+  DS6_MouseWheel = 0;
+  /* абсолютная позиция */
+  GetCursorPos(&pt);
+  ScreenToClient(DS6_Anim.hWnd, &pt);
+  DS6_Anim.MsX = pt.x;
+  DS6_Anim.MsY = pt.y;
+  /* относительное перемещение */
+  DS6_Anim.MsDeltaX = pt.x - DS6_MouseOldX;
+  DS6_Anim.MsDeltaY = pt.y - DS6_MouseOldY;
+  DS6_MouseOldX = pt.x;
+  DS6_MouseOldY = pt.y;
+
+  /* Джойстик */
+  if ((i = joyGetNumDevs()) > 0)
+  {
+    JOYCAPS jc;
+
+    /* получение общей информации о джостике */
+    if (joyGetDevCaps(JOYSTICKID2, &jc, sizeof(jc)) == JOYERR_NOERROR)
+    {
+      JOYINFOEX ji;
+
+      /* получение текущего состояния */
+      ji.dwSize = sizeof(JOYCAPS);
+      ji.dwFlags = JOY_RETURNALL;
+      if (joyGetPosEx(JOYSTICKID2, &ji) == JOYERR_NOERROR)
+      {
+        /* Кнопки */
+        memcpy(DS6_Anim.JButsOld, DS6_Anim.JButs, sizeof(DS6_Anim.JButs));
+        for (i = 0; i < 32; i++)
+          DS6_Anim.JButs[i] = (ji.dwButtons >> i) & 1;
+        for (i = 0; i < 32; i++)
+          DS6_Anim.JButsClick[i] = DS6_Anim.JButs[i] && !DS6_Anim.JButsOld[i];
+
+        /* Оси */
+        DS6_Anim.JX = DS6_GET_AXIS_VALUE(X);
+        DS6_Anim.JY = DS6_GET_AXIS_VALUE(Y);
+        if (jc.wCaps & JOYCAPS_HASZ)
+          DS6_Anim.JZ = DS6_GET_AXIS_VALUE(Z);
+        if (jc.wCaps & JOYCAPS_HASU)
+          DS6_Anim.JU = DS6_GET_AXIS_VALUE(U);
+        if (jc.wCaps & JOYCAPS_HASV)
+          DS6_Anim.JV = DS6_GET_AXIS_VALUE(V);
+        if (jc.wCaps & JOYCAPS_HASR)
+          DS6_Anim.JR = DS6_GET_AXIS_VALUE(R);
+
+        if (jc.wCaps & JOYCAPS_HASPOV)
+        {
+          if (ji.dwPOV == 0xFFFF)
+            DS6_Anim.JPOV = 0;
+          else
+            DS6_Anim.JPOV = ji.dwPOV / 4500 + 1;
+        }
+      }
+    }
+  }
+
+  
+  /* опрос на изменение состояний объектов */
+  for (i = 0; i < DS6_Anim.NumOfUnits; i++)
+    DS6_Anim.Units[i]->Response(DS6_Anim.Units[i], &DS6_Anim);
+
   /* рисование объектов */
+  SelectObject(DS6_Anim.hDC, GetStockObject(WHITE_PEN));   
   for (i = 0; i < DS6_Anim.NumOfUnits; i++)
   {     
     DS6_Anim.Units[i]->Render(DS6_Anim.Units[i], &DS6_Anim);

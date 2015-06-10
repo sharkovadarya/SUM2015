@@ -114,7 +114,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   UpdateWindow(hWnd);
 
   for (i = 0; i < 5; i++)
-    DS6_AnimAddUnit(DS6_UnitBallCreate());
+    DS6_AnimAddUnit(DS6_UnitCowCreate());
   DS6_AnimAddUnit(DS6_UnitControlCreate());
 
   /* Запуск цикла сообщений окна */
@@ -154,8 +154,7 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
 
   switch (Msg)
   {
-  case WM_CREATE: 
-    /*ObjLoad("cow.object"); */
+  case WM_CREATE:    
     cs = (CREATESTRUCT *)lParam;     
     SetTimer(hWnd, 111, 50, NULL); 
     DS6_AnimInit(hWnd); 

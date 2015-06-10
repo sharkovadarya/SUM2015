@@ -1,7 +1,7 @@
 /* FILENAME: UCONTRL.C
  * PROGRAMMER: DS6
  * PURPOSE: Control unit handle module.
- * LAST UPDATE: 09.06.2015
+ * LAST UPDATE: 10.06.2015
  */
 
 #include <stdio.h>
