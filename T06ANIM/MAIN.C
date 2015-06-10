@@ -5,9 +5,7 @@
 */
 #pragma warning(disable: 4244) 
 
-#include <windows.h>
 #include "vec.h"
-#include "obj3d.h"
 #include "anim.h"
 #include "units.h"
 
