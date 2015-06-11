@@ -3,7 +3,7 @@
  * PURPOSE: Animation system module.
  * LAST UPDATE: 10.06.2015
  */
-#include "anim.h"
+#include "anim.h" 
 #include <stdio.h>  
 #include <mmsystem.h>
 #pragma comment(lib, "winmm")
@@ -11,6 +11,7 @@
 /* Получение значения оси джойстика */
 #define DS6_GET_AXIS_VALUE(Axis) \
   (2.0 * (ji.dw ## Axis ## pos - jc.w ## Axis ## min) / (jc.w ## Axis ## max - jc.w ## Axis ## min) - 1.0)
+
 
 /* Сохраненные координаты мыши */
 static INT
@@ -122,8 +123,7 @@ VOID DS6_AnimResize( INT W, INT H )
 
   /* Сохранение размера */
   DS6_Anim.W = W;
-  DS6_Anim.H = H;
-  DS6_Anim.NumOfUnits = 0;
+  DS6_Anim.H = H;  
 
   ReleaseDC(DS6_Anim.hWnd, hDC);
 

@@ -60,6 +60,13 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
     DS6_AnimFlipFullScreen();
   if (Ani->KeysClick['P'])
     DS6_AnimSetPause(!Ani->IsPause);
+
+  if (Ani->JButsClick[7])
+    DS6_AnimFlipFullScreen();
+  if (Ani->JButsClick[1])
+    DS6_AnimSetPause(!Ani->IsPause);
+  if (Ani->JButs[11])
+    DS6_AnimDoExit();
 } /* End of 'DS6_AnimUnitResponse' function */
 
 /* Функция построения объекта анимации.

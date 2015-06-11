@@ -21,6 +21,7 @@ typedef struct tagds6GOBJ
 /* Матрицы */
 extern MATR
   DS6_RndMatrWorld,
+  DS6_RndMatrProj,
   DS6_RndMatrView;
 
 /* Параметры проецирования */

@@ -15,7 +15,8 @@
 MATR
   DS6_RndMatrWorld = DS6_UNIT_MATR,
   DS6_RndMatrView = DS6_UNIT_MATR,
-  DS6_RndMatrWorldView = DS6_UNIT_MATR;
+  DS6_RndMatrProj = DS6_UNIT_MATR,
+  DS6_RndMatrWorldViewProj = DS6_UNIT_MATR;
 
 /* Параметры проецирования */
 DBL
@@ -32,16 +33,12 @@ DBL
 POINT DS6_RndWorldToScreen( VEC P )
 {
   POINT Ps;
-  VEC Pp;
 
   /* преобразование СК */
-  P = PointTransform(P, DS6_RndMatrWorldView);
+  P = PointTransform(P, DS6_RndMatrWorldViewProj);
 
-  Pp.X = P.X * DS6_RndProjDist / (- P.Z);
-  Pp.Y = P.Y * DS6_RndProjDist / (- P.Z);
-
-  Ps.x = DS6_Anim.W / 2 + Pp.X * DS6_Anim.W / DS6_RndWp;
-  Ps.y = DS6_Anim.H / 2 - Pp.Y * DS6_Anim.H / DS6_RndHp;
+  Ps.x = (P.X / 2 + 0.5) * DS6_Anim.W;
+  Ps.y = (-P.Y / 2 + 0.5) * DS6_Anim.H;
 
   return Ps;
 } /* End of 'DS6_RndWorldToScreen' function */
@@ -133,7 +130,7 @@ VOID DS6_RndGObjDraw( ds6GOBJ *GObj )
     return;
 
   /* проецируем все точки */
-  DS6_RndMatrWorldView = MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView);
+  DS6_RndMatrWorldViewProj = MatrMulMatr(MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView), DS6_RndMatrProj);
   for (i = 0; i < GObj->NumOfV; i++)
     pnts[i] = DS6_RndWorldToScreen(GObj->V[i]);
 

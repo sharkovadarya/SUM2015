@@ -4,7 +4,6 @@
  * LAST UPDATE: 10.06.2015
  */
 
-#include <stdlib.h>
 #include <string.h> 
 #include "anim.h"
 #include "vec.h"
@@ -63,18 +62,15 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
-{  
-  DS6_RndMatrView = MatrView(VecSet(30, 30, 30), VecSet(0, 0, 0), VecSet(0, 1, 0));
-/*  DS6_RndMatrWorld = MatrMulMatr(MatrMulMatr(MatrMulMatr(
-                                 MatrTranslate(Ani->JX * 59, Ani->JY * 88, 0),
-                                 MatrScale(0.1, 0.1, 0.1)), 
-                                 MatrRotateY(30 * Ani->Time + Ani->JR * 180)), 
-                                 MatrTranslate(0, 0, 100 * Ani->JZ));*/
+{ 
+  DS6_RndMatrWorld = MatrMulMatr(MatrMulMatr(
+		MatrRotateY(30 * Ani->Time + 100 * Ani->JR), MatrScale(0.10, 0.10, Ani->JZ)),
+		MatrTranslate(Ani->JX, -Ani->JY, 100 * Ani->JZ));
+  DS6_RndMatrView = MatrView(VecSet(1, 1, 1), VecSet(0, 0, 0), VecSet(0, 1, 0));
 
-  DS6_RndMatrWorld = MatrMulMatr(MatrRotateZ(30 * sin(Ani->Time * 8)), MatrRotateY(30 * Ani->Time));
 
   SelectObject(Ani->hDC, GetStockObject(DC_PEN)); 
-  SetDCPenColor(Ani->hDC, RGB(rand() / 255, rand() / 255, rand() / 255));
+  SetDCPenColor(Ani->hDC, RGB(255, 255, 255));
   DS6_RndGObjDraw(&Uni->Model); 
   
 } /* End of 'DS6_AnimUnitRender' function */
