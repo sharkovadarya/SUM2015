@@ -23,6 +23,8 @@ typedef struct tagds6UNIT_CTRL
  *       ds6ANIM *Ani;
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
  */
+
+INT DS6_GamePadShift = 0;
 static VOID DS6_AnimUnitInit( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
 {
   Uni->hFnt = CreateFont(30, 0, 0, 0, FW_BOLD, FALSE, FALSE,
@@ -67,6 +69,11 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
     DS6_AnimSetPause(!Ani->IsPause);
   if (Ani->JButs[11])
     DS6_AnimDoExit();
+  if (Ani->JButsClick[3])
+    DS6_GamePadShift++;
+  if (Ani->JButsClick[2])
+    DS6_GamePadShift--;  
+  
 } /* End of 'DS6_AnimUnitResponse' function */
 
 /* Ôóíêöèÿ ïîñòðîåíèÿ îáúåêòà àíèìàöèè.
@@ -83,7 +90,7 @@ static VOID DS6_AnimUnitRender( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
   RECT rc;
   static CHAR Buf[1000];
 
-  SetTextColor(Ani->hDC, RGB(255, 255, 255));
+  SetTextColor(Ani->hDC, RGB(22, 228, 8));
   SetBkMode(Ani->hDC, TRANSPARENT);
 
   rc.left = 0;       

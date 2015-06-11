@@ -186,10 +186,6 @@
 				RelativePath=".\MAIN.C"
 				>
 			</File>
-			<File
-				RelativePath=".\UCTRL.C"
-				>
-			</File>
 			<Filter
 				Name="Animation System"
 				>
@@ -221,6 +217,10 @@
 			<Filter
 				Name="Units"
 				>
+				<File
+					RelativePath=".\UCTRL.C"
+					>
+				</File>
 				<File
 					RelativePath=".\UMODEL.C"
 					>

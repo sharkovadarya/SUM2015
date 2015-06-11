@@ -133,7 +133,7 @@ VOID DS6_AnimResize( INT W, INT H )
   else
     DS6_RndHp = (DBL)H / W * 3, DS6_RndWp = 3;
 
-   DS6_RndMatrProj = MatrFrustum(-DS6_RndWp / 2, DS6_RndWp / 2, -DS6_RndHp / 2, DS6_RndHp / 2, DS6_RndProjDist, 800);
+   DS6_RndMatrProj = MatrFrustum( - DS6_RndWp / 2, DS6_RndWp / 2, - DS6_RndHp / 2, DS6_RndHp / 2, DS6_RndProjDist, 800);
 
 } /* End of 'DS6_AnimResize' function */
 

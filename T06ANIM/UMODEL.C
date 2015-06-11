@@ -62,15 +62,17 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
  * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
-{ 
+{
+  
   DS6_RndMatrWorld = MatrMulMatr(MatrMulMatr(
-		MatrRotateY(30 * Ani->Time + 100 * Ani->JR), MatrScale(0.10, 0.10, Ani->JZ)),
-		MatrTranslate(Ani->JX, -Ani->JY, 100 * Ani->JZ));
-  DS6_RndMatrView = MatrView(VecSet(1, 1, 1), VecSet(0, 0, 0), VecSet(0, 1, 0));
+		MatrRotateY(30 * Ani->Time + 10 * Ani->JR), MatrScale(0.05, 0.05, Ani->JZ)),
+		MatrTranslate(Ani->JX, -Ani->JY, 10 * Ani->JZ));
 
+  DS6_RndMatrView = MatrView(VecSet(0 + DS6_GamePadShift, 0 + DS6_GamePadShift, 1 + DS6_GamePadShift), 
+                             VecSet(0 + DS6_GamePadShift, 0 + DS6_GamePadShift, 0 + DS6_GamePadShift), 
+                             VecSet(0 + DS6_GamePadShift, 1 + DS6_GamePadShift, 0 + DS6_GamePadShift));
 
-  SelectObject(Ani->hDC, GetStockObject(DC_PEN)); 
-  SetDCPenColor(Ani->hDC, RGB(255, 255, 255));
+  SelectObject(Ani->hDC, GetStockObject(WHITE_PEN));   
   DS6_RndGObjDraw(&Uni->Model); 
   
 } /* End of 'DS6_AnimUnitRender' function */

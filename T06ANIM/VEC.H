@@ -447,7 +447,7 @@ __inline MATR MatrView( VEC Loc, VEC At, VEC Up1 )
   return m;
 } /* End of 'MatrView' function */
 
-__inline MATR MatrFrustum( DBL Left, DBL Right, DBL Top, DBL Bottom, DBL Near, DBL Far )
+__inline MATR MatrFrustum( DBL Left, DBL Right, DBL Bottom, DBL Top, DBL Near, DBL Far )
 {
   MATR m =
   {

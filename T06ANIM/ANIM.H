@@ -154,6 +154,7 @@ VOID DS6_AnimDoExit( VOID );
 VOID DS6_AnimSetPause( BOOL NewPauseFlag );
 
 extern INT DS6_MouseWheel;
+extern INT DS6_GamePadShift;
 
 
 #endif /* __ANIM_H_ */
