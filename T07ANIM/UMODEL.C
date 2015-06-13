@@ -25,7 +25,7 @@ typedef struct tagds6UNIT_MODEL
  */
 static VOID DS6_AnimUnitInit( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
 {  
-  DS6_RndGObjLoad(&Uni->Model, "cube.object");
+  DS6_RndGObjLoad(&Uni->Model, "cow.object");
 } /* End of 'DS6_AnimUnitInit' function */
 
 /* Animation object deinitialization function.
@@ -38,11 +38,12 @@ static VOID DS6_AnimUnitInit( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
  */
 static VOID DS6_AnimUnitClose( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
 {
-	DS6_RndGObjFree(&Uni->Model);
+  DS6_RndGObjFree(&Uni->Model);
 } /* End of 'DS6_AnimUnitClose' function */
 
 static VOID DS6_AnimUnitResponse(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
-{}
+{
+}
 /* Функция построения объекта анимации.
  * АРГУМЕНТЫ:
  *   - указатель на "себя" - сам объект анимации:
@@ -55,7 +56,7 @@ static VOID DS6_AnimUnitRender( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
 {  
   INT i, j;
 
-  DS6_RndMatrView = MatrView(VecSet(8, 8, 8),
+  DS6_RndMatrView = MatrView(VecSet(8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ),
                              VecSet(0, 0, 0),
 		             VecSet(0, 1, 0));
 
@@ -63,17 +64,21 @@ static VOID DS6_AnimUnitRender( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   if (Ani->KeysClick['Q'])
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  if (Ani->JButsClick[4])
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  if (Ani->JButsClick[6])
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glEnable(GL_DEPTH_TEST);
 
   for (i = -2; i < 2; i++)
     for (j = -2; j < 2; j++)
     {
       DS6_RndMatrWorld =
-                         MatrMulMatr(MatrMulMatr(MatrMulMatr(
-			             MatrTranslate(Ani->JX * 228, Ani->JY * 228, 0),
-				     MatrScale(0.1, 0.1, 0.1)),
-				     MatrRotateY(30 * Ani->Time + Ani->JR * 180)),
-				     MatrTranslate(j * 2.5, 0, i * 2.5 + 228 * Ani->JZ));
+                       MatrMulMatr(MatrMulMatr(MatrMulMatr(
+                                                           MatrTranslate(Ani->JX * 228, Ani->JY * 88, 0),
+                                                           MatrScale(0.228, 0.228, 0.228)),
+                                                           MatrRotateY(30 * Ani->Time + Ani->JR * 228)),
+                                                           MatrTranslate(j * 1.30, 0, i * 1.30 + 228 * Ani->JZ));
       glColor3d(i & 1, j & 1, 1 - ((i & 1) + (j & 1)) / 2);
       DS6_RndGObjDraw(&Uni->Model);
     }
