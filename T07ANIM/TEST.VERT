@@ -20,7 +20,6 @@ out vec3 DrawPosition;
 void main( void )
 {
   gl_Position = MatrProj * MatrView * MatrWorld * vec4(InPosition * 3, 1);
-  // gl_Position = vec4(0.3, 0, 0.3, 1);
   DrawColor = InColor;
   DrawPosition = InPosition;
 }

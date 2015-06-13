@@ -7,6 +7,8 @@
 #include <stdio.h>  
 
 #include "anim.h" 
+/* смещение по оси Z */
+static INT DS6_GamePadShift = 0;
 
 /* Тип структуры контроля */
 typedef struct tagds6UNIT_CTRL
@@ -55,7 +57,19 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
   if (Ani->KeysClick['F'])
     DS6_AnimFlipFullScreen();
   if (Ani->KeysClick['P'])
+    DS6_AnimSetPause(!Ani->IsPause);  
+  
+  if (Ani->JButsClick[7])
+    DS6_AnimFlipFullScreen();
+  if (Ani->JButsClick[1])
     DS6_AnimSetPause(!Ani->IsPause);
+  if (Ani->JButs[11])
+    DS6_AnimDoExit();
+  if (Ani->JButsClick[3])
+    DS6_GamePadShift++;
+  if (Ani->JButsClick[2])
+    DS6_GamePadShift--;  
+ 
 } /* End of 'DS6_AnimUnitResponse' function */
 
 /* Функция построения объекта анимации.
@@ -68,16 +82,16 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
 {
-	static DBL count = 30;
-	static CHAR Buf[1000];
+  static DBL count = 30;
+  static CHAR Buf[1000];
 
-	count += Ani->GlobalDeltaTime;
-	if (count > 1)
-	{
-		count = 0;
-		sprintf(Buf, "FPS: %.3f", Ani->FPS);
-		SetWindowText(Ani->hWnd, Buf);
-	}
+  count += Ani->GlobalDeltaTime;
+  if (count > 1)
+  {
+    count = 0;
+    sprintf(Buf, "FPS: %.3f", Ani->FPS);
+    SetWindowText(Ani->hWnd, Buf);
+  }
 
 } /* End of 'DS6_AnimUnitRender' function */
 

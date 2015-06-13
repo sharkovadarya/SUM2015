@@ -30,24 +30,24 @@ typedef struct tagMATR
 } MATR;
 typedef struct tagCOLOR
 {
-	FLT R, G, B, A; /* компоненты цвета + прозрачность (0..1) */
+  FLT R, G, B, A; /* компоненты цвета + прозрачность (0..1) */
 } COLOR;
 
 __inline DBL Rnd0(VOID)
 {
-	return (DBL)rand() / RAND_MAX;
+  return (DBL)rand() / RAND_MAX;
 } /* End of 'Rnd0' function */
 
 __inline DBL Rnd1(VOID)
 {
-	return 2.0 * rand() / RAND_MAX - 1;
+  return 2.0 * rand() / RAND_MAX - 1;
 } /* End of 'Rnd1' function */
 
 __inline COLOR ColorSet(FLT R, FLT G, FLT B, FLT A)
 {
-	COLOR c = { R, G, B, A };
+  COLOR c = { R, G, B, A };
 
-	return c;
+  return c;
 } /* End of 'ColorSet' function */
 
 

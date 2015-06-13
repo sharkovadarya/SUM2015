@@ -23,9 +23,9 @@ typedef struct
 	HGLRC hGLRC;        /* Контекст рендеринга */
   HDC hDC;            /* Контекст вывода */
 
-	/* Массив элементов анимации и их количество */
-	ds6UNIT *Units[DS6_MAX_UNITS];
-	INT NumOfUnits;
+  /* Массив элементов анимации и их количество */
+  ds6UNIT *Units[DS6_MAX_UNITS];
+  INT NumOfUnits;
 
   BOOL IsPause;       /* Проверка на паузу */
   DBL GlobalTime, 

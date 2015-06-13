@@ -25,7 +25,7 @@ typedef struct tagds6UNIT_MODEL
  */
 static VOID DS6_AnimUnitInit( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
 {  
-  DS6_RndGObjLoad(&Uni->Model, "cow.object");
+  DS6_RndGObjLoad(&Uni->Model, "cube.object");
 } /* End of 'DS6_AnimUnitInit' function */
 
 /* Animation object deinitialization function.
@@ -53,30 +53,30 @@ static VOID DS6_AnimUnitResponse(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
  */
 static VOID DS6_AnimUnitRender( ds6UNIT_MODEL *Uni, ds6ANIM *Ani )
 {  
-	INT i, j;
+  INT i, j;
 
-	DS6_RndMatrView = MatrView(VecSet(8, 8, 8),
-		VecSet(0, 0, 0),
-		VecSet(0, 1, 0));
+  DS6_RndMatrView = MatrView(VecSet(8, 8, 8),
+                             VecSet(0, 0, 0),
+		             VecSet(0, 1, 0));
 
-	if (Ani->KeysClick['W'])
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	if (Ani->KeysClick['Q'])
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_DEPTH_TEST);
+  if (Ani->KeysClick['W'])
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  if (Ani->KeysClick['Q'])
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glEnable(GL_DEPTH_TEST);
 
-	for (i = 0; i < 1; i++)
-		for (j = 0; j < 1; j++)
-		{
-			DS6_RndMatrWorld =
-				MatrMulMatr(MatrMulMatr(MatrMulMatr(
-				MatrTranslate(Ani->JX * 59, Ani->JY * 88, 0),
-				MatrScale(0.1, 0.1, 0.1)),
-				MatrRotateY(30 * Ani->Time + Ani->JR * 180)),
-				MatrTranslate(j * 1.30, 0, i * 1.30 + 100 * Ani->JZ));
-			glColor3d(i & 1, j & 1, 1 - ((i & 1) + (j & 1)) / 2);
-			DS6_RndGObjDraw(&Uni->Model);
-		}
+  for (i = -2; i < 2; i++)
+    for (j = -2; j < 2; j++)
+    {
+      DS6_RndMatrWorld =
+                         MatrMulMatr(MatrMulMatr(MatrMulMatr(
+			             MatrTranslate(Ani->JX * 228, Ani->JY * 228, 0),
+				     MatrScale(0.1, 0.1, 0.1)),
+				     MatrRotateY(30 * Ani->Time + Ani->JR * 180)),
+				     MatrTranslate(j * 2.5, 0, i * 2.5 + 228 * Ani->JZ));
+      glColor3d(i & 1, j & 1, 1 - ((i & 1) + (j & 1)) / 2);
+      DS6_RndGObjDraw(&Uni->Model);
+    }
   
 } /* End of 'DS6_AnimUnitRender' function */
 

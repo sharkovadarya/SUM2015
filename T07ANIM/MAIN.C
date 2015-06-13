@@ -18,40 +18,6 @@ INT DS6_MouseWheel;
 LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
                                WPARAM wParam, LPARAM lParam );
 
-/*VOID FlipFullScreen( HWND hWnd ) 
-{
-  static BOOL IsFullScreen = FALSE;
-  static RECT SaveRC;
-
-  if (!IsFullScreen)
-  {
-    RECT rc;
-    HMONITOR hmon;
-    MONITORINFOEX moninfo;
-
-    GetWindowRect(hWnd, &SaveRC);
-    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-    moninfo.cbSize = sizeof(moninfo);
-    GetMonitorInfo(hmon, (MONITORINFO *)&moninfo);
-    
-    rc = moninfo.rcMonitor;
-
-    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
-
-    SetWindowPos(hWnd, HWND_TOP, rc.left, rc.top
-      , rc.right - rc.left, rc.bottom - rc.top + 201, SWP_NOOWNERZORDER);
-    IsFullScreen = TRUE;
-  }
-  else
-  {
-    SetWindowPos(hWnd, HWND_TOPMOST, SaveRC.left, SaveRC.top, SaveRC.right - SaveRC.left, 
-                                     SaveRC.bottom - SaveRC.top, SWP_NOOWNERZORDER);
-    IsFullScreen = FALSE;
-  }      
-
-} */
-
-
 /* Главная функция программы.
  *   - дескриптор экземпляра приложения:
  *       HINSTANCE hInstance;
