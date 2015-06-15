@@ -42,7 +42,7 @@ static VOID DS6_AnimUnitInit(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
   };
 
   /* загружаем текстуру */
-  Uni->TextId = DS6_TextureLoad("M.BMP");
+  Uni->TextId = DS6_TextureLoad("ElphSkin.BMP");
 
   DS6_PrimCreate(&Uni->Pr, DS6_PRIM_TRIMESH, 4, 6, V, I);
 
@@ -78,9 +78,9 @@ static VOID DS6_AnimUnitRender(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
 {
   INT i, j;
 
-  DS6_RndMatrView = MatrView(VecSet(8, 8, 8),
+  DS6_RndMatrView = MatrView(VecSet(8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ),
                              VecSet(0, 0, 0),
-    VecSet(0, 1, 0));
+                             VecSet(0, 1, 0));
 
   if (Ani->KeysClick['W'])
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -88,13 +88,13 @@ static VOID DS6_AnimUnitRender(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glEnable(GL_DEPTH_TEST);
 
-  for (i = 0; i < 1; i++)
-    for (j = 0; j < 1; j++)
+  for (i = -1; i < 1; i++)
+    for (j = -1; j < 1; j++)
     {
       DS6_RndMatrWorld =
         MatrMulMatr(MatrMulMatr(MatrMulMatr(
         MatrTranslate(Ani->JX * 59, Ani->JY * 88, 0),
-        MatrScale(0.1, 0.1, 0.1)),
+        MatrScale(0.001, 0.001, 0.001)),
         MatrRotateY(30 * Ani->Time + Ani->JR * 180)),
         MatrTranslate(j * 1.30, 0, i * 1.30 + 100 * Ani->JZ));
       glColor3d(i & 1, j & 1, 1 - ((i & 1) + (j & 1)) / 2);

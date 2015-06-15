@@ -69,8 +69,16 @@ VOID DS6_GeomDraw( ds6GEOM *G )
 {
   INT i, loc;
 
+  /* посылаем количество частей */
+  glUseProgram(DS6_RndProg);
+  loc = glGetUniformLocation(DS6_RndProg, "TotalParts");
+  if (loc != -1)
+    glUniform1f(loc, G->NumOfPrimitives);
+  glUseProgram(0);
+
   for (i = 0; i < G->NumOfPrimitives; i++)
   {
+    /* посылаем номер текущей части */
     glUseProgram(DS6_RndProg);
     loc = glGetUniformLocation(DS6_RndProg, "PartNo");
     if (loc != -1)

@@ -26,7 +26,7 @@ MATR DS6_RndPrimMatrConvert = DS6_UNIT_MATR;
 *   (BOOL) TRUE ïðè óñïåõå, èíà÷å FALSE.
 */
 VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type,
-	INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices)
+                    INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices)
 {
   Prim->Type = Type;
   Prim->NumOfI = NoofI;
@@ -96,11 +96,11 @@ VOID DS6_PrimFree(ds6PRIM *Prim)
 *       ds6PRIM *Prim;
 * ÂÎÇÂÐÀÙÀÅÌÎÅ ÇÍÀ×ÅÍÈÅ: Íåò.
 */
-VOID DS6_PrimDraw(ds6PRIM *Prim)
+VOID DS6_PrimDraw( ds6PRIM *Prim )
 {
   INT loc;
   MATR M;
-  
+
   DS6_RndMatrWorldViewProj = MatrMulMatr(MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView), DS6_RndMatrProj);
 
   /* îñòàâëåíî äëÿ îòëäàäêè, åñëè íåò øåéäåðîâ */
@@ -113,13 +113,13 @@ VOID DS6_PrimDraw(ds6PRIM *Prim)
   loc = glGetUniformLocation(DS6_RndProg, "MatrWorld");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrWorld.A[0]);
-    loc = glGetUniformLocation(DS6_RndProg, "MatrView");
+  loc = glGetUniformLocation(DS6_RndProg, "MatrView");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrView.A[0]);
-    loc = glGetUniformLocation(DS6_RndProg, "MatrProj");
+  loc = glGetUniformLocation(DS6_RndProg, "MatrProj");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrProj.A[0]);
-    loc = glGetUniformLocation(DS6_RndProg, "MatrWVP");
+  loc = glGetUniformLocation(DS6_RndProg, "MatrWVP");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrWorldViewProj.A[0]);
 
@@ -127,6 +127,7 @@ VOID DS6_PrimDraw(ds6PRIM *Prim)
   loc = glGetUniformLocation(DS6_RndProg, "MatrWVInverse");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
+
   M = MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView);
   loc = glGetUniformLocation(DS6_RndProg, "MatrWV");
   if (loc != -1)
@@ -137,10 +138,10 @@ VOID DS6_PrimDraw(ds6PRIM *Prim)
     glUniform1f(loc, DS6_Anim.Time);
 
   glPrimitiveRestartIndex(0xFFFFFFFF);
-  if (Prim->Type == DS6_PRIM_GRID)
+  if (Prim->Type != DS6_PRIM_TRIMESH)
     glDrawElements(GL_TRIANGLE_STRIP, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
   else
-    glDrawElements(GL_TRIANGLES, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, Prim->NumOfI, GL_UNSIGNED_INT, NULL); 
 
   glUseProgram(0);
   glBindVertexArray(0);

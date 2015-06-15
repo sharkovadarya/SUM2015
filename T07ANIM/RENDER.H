@@ -113,8 +113,8 @@ typedef struct tagds6VERTEX
 *       INT *Indices;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type,
-INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices);
+VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type, 
+                    INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices);
 
 /* Функция удаления примитива.
 * АРГУМЕНТЫ:
