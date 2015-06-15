@@ -1,5 +1,5 @@
 /* FILENAME: GEOM.C
- * PROGRAMMER: VG4
+ * PROGRAMMER: DS6
  * PURPOSE: Rendering system declaration module.
  * LAST UPDATE: 13.06.2015
  */
@@ -12,24 +12,24 @@
 /* Функция добавления примитива к геометрическому объекту.
  * АРГУМЕНТЫ:
  *   - указатель на геометрический объект:
- *       vg4GEOM *G;
+ *       ds6GEOM *G;
  *   - указатель на добавляемый примитив:
- *       vg4PRIM *Prim;
+ *       ds6PRIM *Prim;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
  *   (INT) номер добавленного примитива в массиве (-1 при ошибке).
  */
-INT VG4_GeomAddPrim( vg4GEOM *G, vg4PRIM *Prim )
+INT DS6_GeomAddPrim( ds6GEOM *G, ds6PRIM *Prim )
 {
-  vg4PRIM *new_bulk;
+  ds6PRIM *new_bulk;
 
   /* Выделяем память под новый массив примитивов */
-  if ((new_bulk = malloc(sizeof(vg4PRIM) * (G->NumOfPrimitives + 1))) == NULL)
+  if ((new_bulk = malloc(sizeof(ds6PRIM) * (G->NumOfPrimitives + 1))) == NULL)
     return -1;
 
   /* Копируем старые примитивы */
   if (G->Prims != NULL)
   {
-    memcpy(new_bulk, G->Prims, sizeof(vg4PRIM) * G->NumOfPrimitives);
+    memcpy(new_bulk, G->Prims, sizeof(ds6PRIM) * G->NumOfPrimitives);
     free(G->Prims);
   }
   /* указываем на новый массив примитивлв */
@@ -38,58 +38,58 @@ INT VG4_GeomAddPrim( vg4GEOM *G, vg4PRIM *Prim )
   /* Сохраняем новый элемент */
   G->Prims[G->NumOfPrimitives] = *Prim;
   return G->NumOfPrimitives++;
-} /* End of 'VG4_GeomAddPrim' function */
+} /* End of 'DS6_GeomAddPrim' function */
 
 /* Функция освобождения геометрического объекта.
  * АРГУМЕНТЫ:
  *   - указатель на геометрический объект:
- *       vg4GEOM *G;
+ *       ds6GEOM *G;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
-VOID VG4_GeomFree( vg4GEOM *G )
+VOID DS6_GeomFree( ds6GEOM *G )
 {
   INT i;
 
   if (G->Prims != NULL)
   {
     for (i = 0; i < G->NumOfPrimitives; i++)
-      VG4_PrimFree(&G->Prims[i]);
+      DS6_PrimFree(&G->Prims[i]);
     free(G->Prims);
   }
-  memset(G, 0, sizeof(vg4GEOM));
-} /* End of 'VG4_GeomFree' function */
+  memset(G, 0, sizeof(ds6GEOM));
+} /* End of 'DS6_GeomFree' function */
 
 /* Функция отображения геометрического объекта.
  * АРГУМЕНТЫ:
  *   - указатель на геометрический объект:
- *       vg4GEOM *G;
+ *       ds6GEOM *G;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
  */
-VOID VG4_GeomDraw( vg4GEOM *G )
+VOID DS6_GeomDraw( ds6GEOM *G )
 {
   INT i, loc;
 
   for (i = 0; i < G->NumOfPrimitives; i++)
   {
-    glUseProgram(VG4_RndProg);
-    loc = glGetUniformLocation(VG4_RndProg, "PartNo");
+    glUseProgram(DS6_RndProg);
+    loc = glGetUniformLocation(DS6_RndProg, "PartNo");
     if (loc != -1)
       glUniform1f(loc, i);
     glUseProgram(0);
-    VG4_PrimDraw(&G->Prims[i]);
+    DS6_PrimDraw(&G->Prims[i]);
   }
-} /* End of 'VG4_GeomDraw' function */
+} /* End of 'DS6_GeomDraw' function */
 
 /* Функция загрузки геометрического объекта из G3D файла.
  * АРГУМЕНТЫ:
  *   - указатель на геометрический объект:
- *       vg4GEOM *G;
+ *       ds6GEOM *G;
  *   - имя файла:
  *       CHAR *FileName;
  * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
  *   (BOOL) TRUE при успехе, иначе - FALSE.
  */
-BOOL VG4_GeomLoad( vg4GEOM *G, CHAR *FileName )
+BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName )
 {
   FILE *F;
   INT i, j, n;
@@ -97,11 +97,11 @@ BOOL VG4_GeomLoad( vg4GEOM *G, CHAR *FileName )
   MATR M;
   static CHAR MtlName[300];
 
-  memset(G, 0, sizeof(vg4GEOM));
+  memset(G, 0, sizeof(ds6GEOM));
   if ((F = fopen(FileName, "rb")) == NULL)
     return FALSE;
 
-  M = MatrTranspose(MatrInverse(VG4_RndPrimMatrConvert));
+  M = MatrTranspose(MatrInverse(DS6_RndPrimMatrConvert));
 
   /* читаем сигнатуру */
   fread(Sign, 1, 4, F);
@@ -119,8 +119,8 @@ BOOL VG4_GeomLoad( vg4GEOM *G, CHAR *FileName )
   for (i = 0; i < n; i++)
   {
     INT nv, ni, *Ind;
-    vg4VERTEX *Vert;
-    vg4PRIM P;
+    ds6VERTEX *Vert;
+    ds6PRIM P;
 
     /* читаем количество вершин и индексов */
     fread(&nv, 4, 1, F);
@@ -129,31 +129,31 @@ BOOL VG4_GeomLoad( vg4GEOM *G, CHAR *FileName )
     fread(MtlName, 1, 300, F);
 
     /* выделяем память под вершины и индексы */
-    if ((Vert = malloc(sizeof(vg4VERTEX) * nv + sizeof(INT) * ni)) == NULL)
+    if ((Vert = malloc(sizeof(ds6VERTEX) * nv + sizeof(INT) * ni)) == NULL)
       break;
     Ind = (INT *)(Vert + nv);
 
     /* читаем данные */
-    fread(Vert, sizeof(vg4VERTEX), nv, F);
+    fread(Vert, sizeof(ds6VERTEX), nv, F);
     /* конвертируем геометрию */
     for (j = 0; j < nv; j++)
     {
-      Vert[j].P = VecMulMatr(Vert[j].P, VG4_RndPrimMatrConvert);
-      Vert[j].N = VecMulMatr3(Vert[j].N, M);
+      Vert[j].P = PointTransform(Vert[j].P, DS6_RndPrimMatrConvert);
+      Vert[j].N = VectorTransform(Vert[j].N, M);
     }
     fread(Ind, sizeof(INT), ni, F);
 
     /* заносим в примитив */
-    VG4_PrimCreate(&P, VG4_PRIM_TRIMESH, nv, ni, Vert, Ind);
+    DS6_PrimCreate(&P, DS6_PRIM_TRIMESH, nv, ni, Vert, Ind);
 
     free(Vert);
 
     /* добавляем примитив к объекту */
-    VG4_GeomAddPrim(G, &P);
+    DS6_GeomAddPrim(G, &P);
   }
   fclose(F);
-  VG4_RndPrimMatrConvert = MatrIdentity();
+  DS6_RndPrimMatrConvert = MatrIdentity();
   return TRUE;
-} /* End of 'VG4_GeomDraw' function */
+} /* End of 'DS6_GeomDraw' function */
 
 /* END OF 'GEOM.C' FILE */

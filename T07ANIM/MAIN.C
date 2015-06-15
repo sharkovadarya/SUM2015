@@ -1,7 +1,7 @@
 /* FILE: MAIN.C
  * PROGRAMMER: DS6
  * LAST UPDATE: 09.06.2015
- * PURPOSE: output a cow and other animation.
+ * PURPOSE: output animation.
 */
 #pragma warning(disable: 4244) 
 

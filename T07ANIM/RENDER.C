@@ -34,30 +34,30 @@ UINT DS6_RndProg;
 
 typedef struct tagVERTEX
 {
-	VEC P;   /* позиция */
-	COLOR C; /* Цвет */
+  VEC P;   /* позиция */
+  COLOR C; /* Цвет */
 } VERTEX;
 
 
 
 /* Функция загрузки геометрического объекта.
- * АРГУМЕНТЫ:
- *   - структура объекта для загрузки:
- *       DS6GOBJ *GObj;
- *   - имя файла:
- *       CHAR *FileName;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
- *   (BOOL) TRUE при успехе, FALSE иначе.
- */
-BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
+* АРГУМЕНТЫ:
+*   - структура объекта для загрузки:
+*       ds6PRIM *GObj;
+*   - имя файла:
+*       CHAR *FileName;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+*   (BOOL) TRUE при успехе, FALSE иначе.
+*/
+BOOL DS6_PrimLoad(ds6PRIM *GObj, CHAR *FileName)
 {
   FILE *F;
-  VERTEX *V;
+  ds6VERTEX *V;
   INT(*Facets)[3];
   INT nv = 0, nf = 0;
   static CHAR Buf[10000];
-  
-  memset(GObj, 0, sizeof(ds6GOBJ));
+
+  memset(GObj, 0, sizeof(ds6PRIM));
   /* Open file */
   if ((F = fopen(FileName, "r")) == NULL)
     return FALSE;
@@ -72,12 +72,13 @@ BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
   }
 
   /* Allocate memory for data */
-  if ((V = malloc(sizeof(VERTEX) * nv + sizeof(INT [3]) * nf)) == NULL)
+  if ((V = malloc(sizeof(ds6VERTEX) * nv + sizeof(INT[3]) * nf)) == NULL)
   {
     fclose(F);
     return FALSE;
   }
-  Facets = (INT (*)[3])(V + nv);
+  Facets = (INT(*)[3])(V + nv);
+  memset(V, 0, sizeof(ds6VERTEX) * nv + sizeof(INT[3]) * nf);
 
   /* Read vertices */
   rewind(F);
@@ -87,8 +88,8 @@ BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
     if (Buf[0] == 'v' && Buf[1] == ' ')
     {
       sscanf(Buf + 2, "%f%f%f",
-        &V[nv].P.X, &V[nv].P.Y, &V[nv].P.Z);
-      V[nv].C = ColorSet(Rnd0(), Rnd0(), Rnd0(), 1);
+             &V[nv].P.X, &V[nv].P.Y, &V[nv].P.Z);
+              V[nv].C = ColorSet(Rnd0(), Rnd0(), Rnd0(), 1);
       nv++;
     }
     else if (Buf[0] == 'f' && Buf[1] == ' ')
@@ -96,9 +97,9 @@ BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
       INT a, b, c;
 
       sscanf(Buf + 2, "%i/%*i/%*i %i/%*i/%*i %i/%*i/%*i", &a, &b, &c) == 3 ||
-              sscanf(Buf + 2, "%i//%*i %i//%*i %i//%*i", &a, &b, &c) == 3 ||
-              sscanf(Buf + 2, "%i/%*i %i/%*i %i/%*i", &a, &b, &c) == 3 ||
-              sscanf(Buf + 2, "%i %i %i", &a, &b, &c);
+      sscanf(Buf + 2, "%i//%*i %i//%*i %i//%*i", &a, &b, &c) == 3 ||
+      sscanf(Buf + 2, "%i/%*i %i/%*i %i/%*i", &a, &b, &c) == 3 ||
+      sscanf(Buf + 2, "%i %i %i", &a, &b, &c);
 
       Facets[nf][0] = a - 1;
       Facets[nf][1] = b - 1;
@@ -107,103 +108,63 @@ BOOL DS6_RndGObjLoad( ds6GOBJ *GObj, CHAR *FileName )
     }
   }
   fclose(F);
-
-  GObj->NumOfV = nv;
-  GObj->NumOfF = nf;
-
-  /* отправляем в OpenGL */
-  glGenVertexArrays(1, &GObj->VA);
-  glGenBuffers(1, &GObj->VBuf);
-  glGenBuffers(1, &GObj->IBuf);
-
-  /* делаем активным массив вершин */
-  glBindVertexArray(GObj->VA);
-  /* делаем активным буфер вершин */
-  glBindBuffer(GL_ARRAY_BUFFER, GObj->VBuf);
-  /* сливаем данные */
-  glBufferData(GL_ARRAY_BUFFER, sizeof(VERTEX) * GObj->NumOfV, V, GL_STATIC_DRAW);
-  /* делаем активным буфер индексов */
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GObj->IBuf);
-  /* сливаем данные */
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(INT [3]) * GObj->NumOfF, Facets, GL_STATIC_DRAW);
-
-  /* задаем порядок данных */
-  /*                    layout,
-   *                       количество компонент,
-   *                          тип,
-   *                                    надо ли нормировать,
-   *                                           размер в байтах одного элемента буфера,
-   *                                                           смещение в байтах до начала данных */
-  glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(VERTEX), (VOID *)0); /* позиция */
-  glVertexAttribPointer(1, 4, GL_FLOAT, FALSE, sizeof(VERTEX), (VOID *)sizeof(VEC)); /* цвет */
-
-  /* включаем нужные аттрибуты (layout) */
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-
+  DS6_PrimCreate(GObj, DS6_PRIM_TRIMESH, nv, nf * 3, V, (INT *)Facets);
+  
   /* освобождаем оперативную память */
   free(V);
   return TRUE;
-} /* End of 'DS6_RndGObjLoad' function */
+} /* End of 'DS6_PrimLoad' function */
 
-/* Функция отрисовки геометрического объекта.
- * АРГУМЕНТЫ:
- *   - структура объекта для загрузки:
- *       DS6GOBJ *GObj;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
- */
-VOID DS6_RndGObjDraw( ds6GOBJ *GObj )
+/* Функция загрузки текстуры.
+* АРГУМЕНТЫ:
+*   - имя файла:
+*       CHAR *FileName;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+*   (INT ) идентификатор OpenGL для текстуры.
+*/
+INT DS6_TextureLoad(CHAR *FileName)
 {
-  INT loc;
+  INT TexId = 0;
+  HDC hMemDC;
+  BITMAP bm;
+  HBITMAP hBm;
+  DWORD *Bits;
+   
+  /* загружаем изображение из файла */
+  hBm = LoadImage(NULL, FileName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+  if (hBm == NULL)
+    return 0;
 
-  DS6_RndMatrWorldViewProj = MatrMulMatr(MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView), DS6_RndMatrProj);
+  /* Create compatible context and select image into one */
+  hMemDC = CreateCompatibleDC(DS6_Anim.hDC);
+  SelectObject(hMemDC, hBm);
+  
+  /* Obtain image size */
+  GetObject(hBm, sizeof(BITMAP), &bm);
+  if ((Bits = malloc(sizeof(DWORD) * bm.bmWidth * bm.bmHeight)) != NULL)
+  {
+    INT x, y, r, g, b;
+    COLORREF c;
 
-  glLoadMatrixf(DS6_RndMatrWorldViewProj.A[0]);
-
-  /* рисуем треугольники */
-  glBindVertexArray(GObj->VA);
-  glUseProgram(DS6_RndProg);
-
-  loc = glGetUniformLocation(DS6_RndProg, "MatrWorld");
-  if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrWorld.A[0]);
-  loc = glGetUniformLocation(DS6_RndProg, "MatrView");
-  if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrView.A[0]);
-  loc = glGetUniformLocation(DS6_RndProg, "MatrProj");
-  if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrProj.A[0]);
-  loc = glGetUniformLocation(DS6_RndProg, "Time");
-  if (loc != -1)
-    glUniform1f(loc, DS6_Anim.Time);
-
-
-  glDrawElements(GL_TRIANGLES, GObj->NumOfF * 3, GL_UNSIGNED_INT, NULL);
-  glUseProgram(0);
-  glBindVertexArray(0);
-} /* End of 'DS6_RndGObjDraw' function */
-
-/* Функция освобождения памяти из-под геометрического объекта.
- * АРГУМЕНТЫ:
- *   - структура объекта для загрузки:
- *       DS6GOBJ *GObj;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
- */
-VOID DS6_RndGObjFree( ds6GOBJ *GObj )
-{
-  /* делаем активным массив вершин */
-  glBindVertexArray(GObj->VA);
-  /* "отцепляем" буфера */
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &GObj->VBuf);
-  glDeleteBuffers(1, &GObj->IBuf);
-  /* делаем неактивным массив вершин */
-  glBindVertexArray(0);
-  glDeleteVertexArrays(1, &GObj->VA);
-
-  memset(GObj, 0, sizeof(ds6GOBJ));
-} /* End of 'DS6_RndGObjFree' function */
-
+    for (y = 0; y < bm.bmHeight; y++)
+      for (x = 0; x < bm.bmWidth; x++)
+      {
+        c = GetPixel(hMemDC, x, y);
+        r = GetRValue(c);
+        g = GetGValue(c);
+        b = GetBValue(c);
+        Bits[(bm.bmHeight - 1 - y) * bm.bmWidth + x] = 0xFF000000 | (r << 16) | (g << 8) | b;
+      }
+    glGenTextures(1, &TexId);
+    glBindTexture(GL_TEXTURE_2D, TexId);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 4, bm.bmWidth, bm.bmHeight,
+                      GL_BGRA_EXT, GL_UNSIGNED_BYTE, Bits);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    free(Bits);
+  }
+  DeleteDC(hMemDC);
+  DeleteObject(hBm);
+  return TexId;
+} /* End of 'DS6_TextureLoadfunction */
 
 /* END OF 'RENDER.C' FILE */

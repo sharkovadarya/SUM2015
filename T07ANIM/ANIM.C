@@ -93,6 +93,11 @@ BOOL DS6_AnimInit( HWND hWnd )
 
   DS6_RndProg = DS6_ShaderLoad("TEST");
 
+  glActiveTexture(GL_TEXTURE0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
   /* Инициализация таймера */
   QueryPerformanceFrequency(&li);
   TimeFreq = li.QuadPart;
@@ -148,7 +153,7 @@ VOID DS6_AnimResize( INT W, INT H )
   DS6_Anim.W = W;
   DS6_Anim.H = H;  
 
-	glViewport(0, 0, W, H);
+  glViewport(0, 0, W, H);
 
   /* projection parametres correction */
   if (W > H)
@@ -191,21 +196,19 @@ VOID DS6_AnimRender( VOID )
     DS6_Anim.FPS = FrameCounter / ((DBL)(li.QuadPart - TimeFPS) / TimeFreq);
     TimeFPS = li.QuadPart;
     FrameCounter = 0;
-	}
+  }
 
     /* время "прошлого" кадра */
     TimeOld = li.QuadPart;
 
     /*** Обновление ввода ***/
-
     /* Клавиатура */
     GetKeyboardState(DS6_Anim.Keys);
     for (i = 0; i < 256; i++)
-    	DS6_Anim.Keys[i] >>= 7;
+      DS6_Anim.Keys[i] >>= 7;
     for (i = 0; i < 256; i++)
-    	DS6_Anim.KeysClick[i] = DS6_Anim.Keys[i] && !DS6_Anim.KeysOld[i];
-    memcpy(DS6_Anim.KeysOld, DS6_Anim.Keys, sizeof(DS6_Anim.KeysOld));
-
+      DS6_Anim.KeysClick[i] = DS6_Anim.Keys[i] && !DS6_Anim.KeysOld[i];
+    memcpy(DS6_Anim.KeysOld, DS6_Anim.Keys, sizeof(DS6_Anim.KeysOld));  
     /* Мышь */
     /* колесо */
     DS6_Anim.MsWheel = DS6_MouseWheel;
@@ -275,8 +278,7 @@ VOID DS6_AnimRender( VOID )
   glClearColor(0.3, 0.5, 0.7, 1);
   glClearDepth(1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glColorMask(TRUE, TRUE, TRUE, FALSE);
-
+  glColorMask(TRUE, TRUE, TRUE, FALSE); 
 
 
   /* рисование объектов */
@@ -290,11 +292,9 @@ VOID DS6_AnimRender( VOID )
       time = 0;
       DS6_ShaderFree(DS6_RndProg);
       DS6_RndProg = DS6_ShaderLoad("TEST");
-    }
-
-      DS6_RndMatrWorld = MatrIdentity();
-
-      DS6_Anim.Units[i]->Render(DS6_Anim.Units[i], &DS6_Anim);
+    }                                   
+    DS6_RndMatrWorld = MatrIdentity();
+    DS6_Anim.Units[i]->Render(DS6_Anim.Units[i], &DS6_Anim);
   }
   glFinish();
   FrameCounter++;
@@ -306,7 +306,7 @@ VOID DS6_AnimRender( VOID )
  */
 VOID DS6_AnimCopyFrame( VOID )
 {
-	SwapBuffers(DS6_Anim.hDC);
+  SwapBuffers(DS6_Anim.hDC);
 } /* End of 'DS6_AnimCopyFrame' function */
 
 /* Функция добавления в систему объекта анимации.

@@ -20,8 +20,8 @@ typedef struct
 {
   HWND hWnd;          /* Окно вывода */
   INT W, H;           /* Размер окна вывода */
-	HGLRC hGLRC;        /* Контекст рендеринга */
   HDC hDC;            /* Контекст вывода */
+  HGLRC hGLRC;        /* Контекст рендеринга */
 
   /* Массив элементов анимации и их количество */
   ds6UNIT *Units[DS6_MAX_UNITS];

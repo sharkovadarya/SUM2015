@@ -1,32 +1,32 @@
 /* FILENAME: PRIM.C
- * PROGRAMMER: VG4
- * PURPOSE: Primitive handle module.
- * LAST UPDATE: 13.06.2015
- */
+* PROGRAMMER: DS6
+* PURPOSE: Primitive handle module.
+* LAST UPDATE: 13.06.2015
+*/
 
 #include "anim.h"
 #include "render.h"
 
 /* Матрица изменения примитива при создании */
-MATR VG4_RndPrimMatrConvert = VG4_UNIT_MATR;
+MATR DS6_RndPrimMatrConvert = DS6_UNIT_MATR;
 
 /* Функция создания примитива.
- * АРГУМЕНТЫ:
- *   - указатель на примитив:
- *       vg4PRIM *Prim;
- *   - тип примитива (VG4_PRIM_***):
- *       vg4PRIM_TYPE Type;
- *   - количество вершин и индексов:
- *       INT NoofV, NoofI;
- *   - массив вершин:
- *       vg4VERTEX *Vertices;
- *   - массив индексов:
- *       INT *Indices;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
- *   (BOOL) TRUE при успехе, иначе FALSE.
- */
-VOID VG4_PrimCreate( vg4PRIM *Prim, vg4PRIM_TYPE Type,
-                     INT NoofV, INT NoofI, vg4VERTEX *Vertices, INT *Indices)
+* АРГУМЕНТЫ:
+*   - указатель на примитив:
+*       ds6PRIM *Prim;
+*   - тип примитива (DS6_PRIM_***):
+*       ds6PRIM_TYPE Type;
+*   - количество вершин и индексов:
+*       INT NoofV, NoofI;
+*   - массив вершин:
+*       ds6VERTEX *Vertices;
+*   - массив индексов:
+*       INT *Indices;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+*   (BOOL) TRUE при успехе, иначе FALSE.
+*/
+VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type,
+	INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices)
 {
   Prim->Type = Type;
   Prim->NumOfI = NoofI;
@@ -40,7 +40,7 @@ VOID VG4_PrimCreate( vg4PRIM *Prim, vg4PRIM_TYPE Type,
   /* делаем активным буфер вершин */
   glBindBuffer(GL_ARRAY_BUFFER, Prim->VBuf);
   /* сливаем данные */
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vg4VERTEX) * NoofV, Vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(ds6VERTEX) * NoofV, Vertices, GL_STATIC_DRAW);
   /* делаем активным буфер индексов */
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Prim->IBuf);
   /* сливаем данные */
@@ -53,10 +53,10 @@ VOID VG4_PrimCreate( vg4PRIM *Prim, vg4PRIM_TYPE Type,
    *                                    надо ли нормировать,
    *                                           размер в байтах одного элемента буфера,
    *                                                           смещение в байтах до начала данных */
-  glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(vg4VERTEX), (VOID *)0); /* позиция */
-  glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(vg4VERTEX), (VOID *)sizeof(VEC)); /* текстура */
-  glVertexAttribPointer(2, 3, GL_FLOAT, FALSE, sizeof(vg4VERTEX), (VOID *)(sizeof(VEC) + sizeof(vg4UV))); /* нормаль */
-  glVertexAttribPointer(3, 4, GL_FLOAT, FALSE, sizeof(vg4VERTEX), (VOID *)(sizeof(VEC) * 2 + sizeof(vg4UV))); /* цвет */
+  glVertexAttribPointer(0, 3, GL_FLOAT, FALSE, sizeof(ds6VERTEX), (VOID *)0); /* позиция */
+  glVertexAttribPointer(1, 2, GL_FLOAT, FALSE, sizeof(ds6VERTEX), (VOID *)sizeof(VEC)); /* текстура */
+  glVertexAttribPointer(2, 3, GL_FLOAT, FALSE, sizeof(ds6VERTEX), (VOID *)(sizeof(VEC) + sizeof(ds6UV))); /* нормаль */
+  glVertexAttribPointer(3, 4, GL_FLOAT, FALSE, sizeof(ds6VERTEX), (VOID *)(sizeof(VEC) * 2 + sizeof(ds6UV))); /* цвет */
 
   /* включаем нужные аттрибуты (layout) */
   glEnableVertexAttribArray(0);
@@ -66,15 +66,15 @@ VOID VG4_PrimCreate( vg4PRIM *Prim, vg4PRIM_TYPE Type,
 
   /* отключаемся от массива вершин */
   glBindVertexArray(0);
-} /* End of 'VG4_PrimCreate' function */
+} /* End of 'DS6_PrimCreate' function */
 
 /* Функция удаления примитива.
- * АРГУМЕНТЫ:
- *   - указатель на примитив:
- *       vg4PRIM *Prim;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
- */
-VOID VG4_PrimFree( vg4PRIM *Prim )
+* АРГУМЕНТЫ:
+*   - указатель на примитив:
+*       ds6PRIM *Prim;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+*/
+VOID DS6_PrimFree(ds6PRIM *Prim)
 {
   /* делаем активным массив вершин */
   glBindVertexArray(Prim->VA);
@@ -87,96 +87,95 @@ VOID VG4_PrimFree( vg4PRIM *Prim )
   glBindVertexArray(0);
   glDeleteVertexArrays(1, &Prim->VA);
 
-  memset(Prim, 0, sizeof(vg4PRIM));
-} /* End of 'VG4_PrimFree' function */
+  memset(Prim, 0, sizeof(ds6PRIM));
+} /* End of 'DS6_PrimFree' function */
 
 /* Функция отрисовки примитива.
- * АРГУМЕНТЫ:
- *   - указатель на примитив:
- *       vg4PRIM *Prim;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
- */
-VOID VG4_PrimDraw( vg4PRIM *Prim )
+* АРГУМЕНТЫ:
+*   - указатель на примитив:
+*       ds6PRIM *Prim;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
+*/
+VOID DS6_PrimDraw(ds6PRIM *Prim)
 {
   INT loc;
   MATR M;
-
-  VG4_RndMatrWorldViewProj = MatrMulMatr(MatrMulMatr(VG4_RndMatrWorld, VG4_RndMatrView), VG4_RndMatrProj);
+  
+  DS6_RndMatrWorldViewProj = MatrMulMatr(MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView), DS6_RndMatrProj);
 
   /* оставлено для отлдадки, если нет шейдеров */
-  glLoadMatrixf(VG4_RndMatrWorldViewProj.A[0]);
+  glLoadMatrixf(DS6_RndMatrWorldViewProj.A[0]);
 
   /* рисуем треугольники */
   glBindVertexArray(Prim->VA);
-  glUseProgram(VG4_RndProg);
+  glUseProgram(DS6_RndProg);
 
-  loc = glGetUniformLocation(VG4_RndProg, "MatrWorld");
+  loc = glGetUniformLocation(DS6_RndProg, "MatrWorld");
   if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, VG4_RndMatrWorld.A[0]);
-  loc = glGetUniformLocation(VG4_RndProg, "MatrView");
+    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrWorld.A[0]);
+    loc = glGetUniformLocation(DS6_RndProg, "MatrView");
   if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, VG4_RndMatrView.A[0]);
-  loc = glGetUniformLocation(VG4_RndProg, "MatrProj");
+    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrView.A[0]);
+    loc = glGetUniformLocation(DS6_RndProg, "MatrProj");
   if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, VG4_RndMatrProj.A[0]);
-  loc = glGetUniformLocation(VG4_RndProg, "MatrWVP");
+    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrProj.A[0]);
+    loc = glGetUniformLocation(DS6_RndProg, "MatrWVP");
   if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, VG4_RndMatrWorldViewProj.A[0]);
+    glUniformMatrix4fv(loc, 1, FALSE, DS6_RndMatrWorldViewProj.A[0]);
 
-  M = MatrTranspose(MatrInverse(MatrMulMatr(VG4_RndMatrWorld, VG4_RndMatrView)));
-  loc = glGetUniformLocation(VG4_RndProg, "MatrWVInverse");
+  M = MatrTranspose(MatrInverse(MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView)));
+  loc = glGetUniformLocation(DS6_RndProg, "MatrWVInverse");
+  if (loc != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
+  M = MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView);
+  loc = glGetUniformLocation(DS6_RndProg, "MatrWV");
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
 
-  M = MatrMulMatr(VG4_RndMatrWorld, VG4_RndMatrView);
-  loc = glGetUniformLocation(VG4_RndProg, "MatrWV");
+  loc = glGetUniformLocation(DS6_RndProg, "Time");
   if (loc != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
-
-  loc = glGetUniformLocation(VG4_RndProg, "Time");
-  if (loc != -1)
-    glUniform1f(loc, VG4_Anim.Time);
+    glUniform1f(loc, DS6_Anim.Time);
 
   glPrimitiveRestartIndex(0xFFFFFFFF);
-  if (Prim->Type == VG4_PRIM_GRID)
+  if (Prim->Type == DS6_PRIM_GRID)
     glDrawElements(GL_TRIANGLE_STRIP, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
   else
     glDrawElements(GL_TRIANGLES, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
 
   glUseProgram(0);
   glBindVertexArray(0);
-} /* End of 'VG4_PrimDraw' function */
+} /* End of 'DS6_PrimDraw' function */
 
 /* Функция создания примитива плоскость.
- * АРГУМЕНТЫ:
- *   - указатель на примитив:
- *       vg4PRIM *Prim;
- *   - касательные вектора-стороны:
- *       VEC Du, Dv;
- *   - разбиение:
- *       INT N, M;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
- *   (BOOL) TRUE при успехе, иначе FALSE.
- */
-BOOL VG4_PrimCreatePlane( vg4PRIM *Prim, VEC Du, VEC Dv, INT N, INT M )
+* АРГУМЕНТЫ:
+*   - указатель на примитив:
+*       ds6PRIM *Prim;
+*   - касательные вектора-стороны:
+*       VEC Du, Dv;
+*   - разбиение:
+*       INT N, M;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+*   (BOOL) TRUE при успехе, иначе FALSE.
+*/
+BOOL DS6_PrimCreatePlane(ds6PRIM *Prim, VEC Du, VEC Dv, INT N, INT M)
 {
-} /* End of 'VG4_PrimCreatePlane' function */
+} /* End of 'DS6_PrimCreatePlane' function */
 
 /* Функция создания примитива сфера.
- * АРГУМЕНТЫ:
- *   - указатель на примитив:
- *       vg4PRIM *Prim;
- *   - центр сферы:
- *       VEC С;
- *   - радиус сферы:
- *       FLT R;
- *   - разбиение:
- *       INT N, M;
- * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
- *   (BOOL) TRUE при успехе, иначе FALSE.
- */
-BOOL VG4_PrimCreateSphere( vg4PRIM *Prim, VEC C, FLT R, INT N, INT M )
+* АРГУМЕНТЫ:
+*   - указатель на примитив:
+*       ds6PRIM *Prim;
+*   - центр сферы:
+*       VEC С;
+*   - радиус сферы:
+*       FLT R;
+*   - разбиение:
+*       INT N, M;
+* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+*   (BOOL) TRUE при успехе, иначе FALSE.
+*/
+BOOL DS6_PrimCreateSphere(ds6PRIM *Prim, VEC C, FLT R, INT N, INT M)
 {
-} /* End of 'VG4_PrimCreateSphere' function */
+} /* End of 'DS6_PrimCreateSphere' function */
 
 /* END OF 'PRIM.C' FILE */

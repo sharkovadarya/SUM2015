@@ -85,7 +85,7 @@ __inline MATR MatrTranspose( MATR M )
   INT i, j;
 
   for (i = 0; i < 4; i++)
-    for (j = 0; j < 4; i++)
+    for (j = 0; j < 4; j++)
       M.A[i][j] = M.A[j][i];
 
   return M; 

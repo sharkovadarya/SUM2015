@@ -1,7 +1,7 @@
 /* FILENAME: IMAGE.C
  * PROGRAMMER: DS6
  * PURPOSE: Image handle declaration module.
- * LAST UPDATE: 08.06.2015
+ * LAST UPDATE: 15.06.2015
  */
 
 #include <string.h>
@@ -25,7 +25,7 @@ BOOL ImageLoad( IMAGE *Img, CHAR *FileName )
   memset(Img, 0, sizeof(IMAGE));
 
   /* Load image from file */
-  Img->hBm = LoadImage(NULL, "globe.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);  
+  Img->hBm = LoadImage(NULL, FileName, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
   if (Img->hBm == NULL)
     return FALSE;
 
