@@ -12,6 +12,7 @@
 ds6UNIT * DS6_UnitModelCreate( VOID );
 ds6UNIT * DS6_UnitControlCreate( VOID );
 
+
 #endif /* __UNITS_H_ */
 
 /* END OF 'UNITS.H' FILE */

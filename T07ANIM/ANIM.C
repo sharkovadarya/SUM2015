@@ -275,10 +275,10 @@ VOID DS6_AnimRender( VOID )
 
 
   /* очистка фона */
-  glClearColor(0.3, 0.5, 0.7, 1);
+  glClearColor(0.3, 0.5, 0.7, 0);
   glClearDepth(1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glColorMask(TRUE, TRUE, TRUE, FALSE); 
+  glColorMask(TRUE, TRUE, TRUE, TRUE); 
 
 
   /* рисование объектов */

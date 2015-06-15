@@ -198,6 +198,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\UNIT.C"
+					>
+				</File>
+				<File
 					RelativePath=".\UNITS.H"
 					>
 				</File>
@@ -211,10 +215,6 @@
 				</File>
 				<File
 					RelativePath=".\ANIM.H"
-					>
-				</File>
-				<File
-					RelativePath=".\UNIT.C"
 					>
 				</File>
 				<Filter

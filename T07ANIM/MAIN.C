@@ -80,6 +80,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   DS6_AnimAddUnit(DS6_UnitModelCreate());
   DS6_AnimAddUnit(DS6_UnitControlCreate());
 
+
   /* Запуск цикла сообщений окна */
   while (GetMessage(&msg, NULL, 0, 0))
   {
