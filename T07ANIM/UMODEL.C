@@ -79,8 +79,8 @@ static VOID DS6_AnimUnitRender(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
   INT i, j;
 
   DS6_RndMatrView = MatrView(VecSet(8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ, 8 + DS6_GamePadShiftZ),
-                             VecSet(0, 0, 0),
-                             VecSet(0, 1, 0));
+                             VecSet(DS6_GamePadShiftY, DS6_GamePadShiftY, DS6_GamePadShiftY),
+                             VecSet(DS6_GamePadShiftX, 1 + DS6_GamePadShiftX, DS6_GamePadShiftX));
 
   if (Ani->KeysClick['W'])
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -93,10 +93,10 @@ static VOID DS6_AnimUnitRender(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
     {
       DS6_RndMatrWorld =
         MatrMulMatr(MatrMulMatr(MatrMulMatr(
-        MatrTranslate(Ani->JX * 59, Ani->JY * 88, 0),
+        MatrTranslate(Ani->JX * 1488, Ani->JY * 1488, 0),
         MatrScale(0.001, 0.001, 0.001)),
-        MatrRotateY(30 * Ani->Time + Ani->JR * 180)),
-        MatrTranslate(j * 1.30, 0, i * 1.30 + 100 * Ani->JZ));
+        MatrRotateY(30 * Ani->Time + Ani->JR * 228)),
+        MatrTranslate(j * 22.8, 0, i * 22.8 + 228 * Ani->JZ));
       glColor3d(i & 1, j & 1, 1 - ((i & 1) + (j & 1)) / 2);
       DS6_GeomDraw(&Uni->Model);
     }

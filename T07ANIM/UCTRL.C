@@ -9,6 +9,9 @@
 #include "anim.h" 
 /* смещение по оси Z */
 INT DS6_GamePadShiftZ = 0;
+INT DS6_GamePadShiftY = 0;
+INT DS6_GamePadShiftX = 0;
+
 
 /* Тип структуры контроля */
 typedef struct tagds6UNIT_CTRL
@@ -69,6 +72,14 @@ static VOID DS6_AnimUnitResponse( ds6UNIT_CTRL *Uni, ds6ANIM *Ani )
     DS6_GamePadShiftZ++;
   if (Ani->JButs[2])
     DS6_GamePadShiftZ--; 
+  if (Ani->JButs[3])
+    DS6_GamePadShiftY++;
+  if (Ani->JButs[5])
+    DS6_GamePadShiftY--; 
+  if (Ani->JButs[8])
+    DS6_GamePadShiftX++;
+  if (Ani->JButs[9])
+    DS6_GamePadShiftX--;  
  
  
 } /* End of 'DS6_AnimUnitResponse' function */

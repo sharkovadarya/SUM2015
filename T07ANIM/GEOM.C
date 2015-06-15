@@ -76,16 +76,32 @@ VOID DS6_GeomDraw( ds6GEOM *G )
     glUniform1f(loc, G->NumOfPrimitives);
   glUseProgram(0);
 
-  for (i = 0; i < G->NumOfPrimitives; i++)
-  {
+  for (i = 0; i < G->NumOfPrimitives; i++)  
     /* посылаем номер текущей части */
-    glUseProgram(DS6_RndProg);
-    loc = glGetUniformLocation(DS6_RndProg, "PartNo");
-    if (loc != -1)
-      glUniform1f(loc, i);
-    glUseProgram(0);
-    DS6_PrimDraw(&G->Prims[i]);
-  }
+    if (DS6_MtlLib[G->Prims[i].MtlNo].Kt == 1)
+    {
+      /* посылаем номер текущей части */
+      glUseProgram(DS6_RndProg);
+      loc = glGetUniformLocation(DS6_RndProg, "PartNo");
+      if (loc != -1)
+        glUniform1f(loc, i);
+      glUseProgram(0);
+      DS6_PrimDraw(&G->Prims[i]);
+    }
+
+     /* рисуем прозрачные объекты */
+  for (i = 0; i < G->NumOfPrimitives; i++)
+    if (DS6_MtlLib[G->Prims[i].MtlNo].Kt != 1)
+    {
+      /* посылаем номер текущей части */
+      glUseProgram(DS6_RndProg);
+      loc = glGetUniformLocation(DS6_RndProg, "PartNo");
+      if (loc != -1)
+        glUniform1f(loc, i);
+      glUseProgram(0);
+      DS6_PrimDraw(&G->Prims[i]);
+    }
+
 } /* End of 'DS6_GeomDraw' function */
 
 /* Функция загрузки геометрического объекта из G3D файла.
@@ -99,11 +115,19 @@ VOID DS6_GeomDraw( ds6GEOM *G )
  */
 BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName )
 {
-  FILE *F;
+   FILE *F;
   INT i, j, n;
   CHAR Sign[4];
   MATR M;
   static CHAR MtlName[300];
+  static CHAR
+    path_buffer[_MAX_PATH],
+    drive[_MAX_DRIVE],
+    dir[_MAX_DIR],
+    fname[_MAX_FNAME],
+    ext[_MAX_EXT];
+
+  _splitpath(FileName, drive, dir, fname, ext);
 
   memset(G, 0, sizeof(ds6GEOM));
   if ((F = fopen(FileName, "rb")) == NULL)
@@ -122,6 +146,10 @@ BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName )
   /* читаем количество примитивов в объекте */
   fread(&n, 4, 1, F);
   fread(MtlName, 1, 300, F);
+
+  /* читаем и загружаем библиотеку материалов */
+  _makepath(path_buffer, drive, dir, MtlName, "");
+  DS6_MtlLoad(path_buffer);
 
   /* читаем примитивы */
   for (i = 0; i < n; i++)
@@ -153,6 +181,7 @@ BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName )
 
     /* заносим в примитив */
     DS6_PrimCreate(&P, DS6_PRIM_TRIMESH, nv, ni, Vert, Ind);
+    P.MtlNo = DS6_MtlFind(MtlName);
 
     free(Vert);
 
@@ -162,6 +191,6 @@ BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName )
   fclose(F);
   DS6_RndPrimMatrConvert = MatrIdentity();
   return TRUE;
-} /* End of 'DS6_GeomDraw' function */
+} /* End of 'DS6_GeomLoad' function */
 
 /* END OF 'GEOM.C' FILE */

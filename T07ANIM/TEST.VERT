@@ -1,7 +1,7 @@
 /* Filename: TEST.VERT */
 
 // версия языка шейдера
-#version 330
+#version 400
 
 // кто куда приходит
 layout(location = 0) in vec3 InPosition;
@@ -16,6 +16,7 @@ uniform mat4 MatrProj;
 uniform mat4 MatrWVP;
 uniform mat4 MatrWV;
 uniform mat4 MatrWVInverse;
+uniform mat4 MatrWInverse;
 uniform float Time;
 
 // выходные параметры
@@ -26,12 +27,9 @@ out vec2 DrawTexCoord;
 
 void main( void )
 {
-  //gl_Position = MatrProj * MatrView * MatrWorld * vec4(InPosition, 1);
-  gl_Position = MatrWVP * vec4(InPosition * 5.50, 1);
-  //gl_Position = vec4(InPosition, 1);
-  DrawNormal = mat3(MatrWVInverse) * InNormal;
-  //gl_Position = vec4(0.3, 0, 0.3, 1);
+  gl_Position = MatrWVP * vec4(InPosition, 1);
+  DrawNormal = mat3(MatrWInverse) * InNormal;
+  DrawPosition = vec3(MatrWorld * vec4(InPosition, 1));
   DrawColor = InColor;
-  DrawPosition = mat3(MatrWV) * InPosition;
   DrawTexCoord = InTexCoord;
 }

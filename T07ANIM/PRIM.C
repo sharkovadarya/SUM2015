@@ -128,6 +128,11 @@ VOID DS6_PrimDraw( ds6PRIM *Prim )
   if (loc != -1)
     glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
 
+  M = MatrTranspose(MatrInverse(DS6_RndMatrWorld));
+  loc = glGetUniformLocation(DS6_RndProg, "MatrWInverse");
+  if (loc != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
+
   M = MatrMulMatr(DS6_RndMatrWorld, DS6_RndMatrView);
   loc = glGetUniformLocation(DS6_RndProg, "MatrWV");
   if (loc != -1)
@@ -137,14 +142,41 @@ VOID DS6_PrimDraw( ds6PRIM *Prim )
   if (loc != -1)
     glUniform1f(loc, DS6_Anim.Time);
 
+ /* Применение материала */
+  loc = glGetUniformLocation(DS6_RndProg, "Ka");
+  if (loc != -1)
+    glUniform3fv(loc, 1, &DS6_MtlLib[Prim->MtlNo].Ka.X);
+  loc = glGetUniformLocation(DS6_RndProg, "Kd");
+  if (loc != -1)
+    glUniform3fv(loc, 1, &DS6_MtlLib[Prim->MtlNo].Kd.X);
+  loc = glGetUniformLocation(DS6_RndProg, "Ks");
+  if (loc != -1)
+    glUniform3fv(loc, 1, &DS6_MtlLib[Prim->MtlNo].Ks.X);
+  loc = glGetUniformLocation(DS6_RndProg, "Kp");
+  if (loc != -1)
+    glUniform1f(loc, DS6_MtlLib[Prim->MtlNo].Kp);
+  loc = glGetUniformLocation(DS6_RndProg, "Kt");
+  if (loc != -1)
+    glUniform1f(loc, DS6_MtlLib[Prim->MtlNo].Kt);
+
+  loc = glGetUniformLocation(DS6_RndProg, "IsTextureUse");
+  if (DS6_MtlLib[Prim->MtlNo].TexId == 0)
+    glUniform1f(loc, 0);
+  else
+  {
+    glUniform1f(loc, 1);
+    glBindTexture(GL_TEXTURE_2D, DS6_MtlLib[Prim->MtlNo].TexId);
+  }
+
   glPrimitiveRestartIndex(0xFFFFFFFF);
-  if (Prim->Type != DS6_PRIM_TRIMESH)
+  if (Prim->Type == DS6_PRIM_GRID)
     glDrawElements(GL_TRIANGLE_STRIP, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
   else
-    glDrawElements(GL_TRIANGLES, Prim->NumOfI, GL_UNSIGNED_INT, NULL); 
+    glDrawElements(GL_TRIANGLES, Prim->NumOfI, GL_UNSIGNED_INT, NULL);
 
   glUseProgram(0);
   glBindVertexArray(0);
+
 } /* End of 'DS6_PrimDraw' function */
 
 /* Функция создания примитива плоскость.

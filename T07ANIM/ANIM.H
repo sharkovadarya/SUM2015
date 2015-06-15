@@ -55,6 +55,8 @@ typedef struct
 
 extern ds6ANIM DS6_Anim;
 extern INT DS6_GamePadShiftZ;
+extern INT DS6_GamePadShiftY;
+extern INT DS6_GamePadShiftX;
 
 /* Базовые поля объекта анимации:
  * - размер структуры для наследования

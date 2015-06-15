@@ -221,6 +221,10 @@
 					Name="Rendering"
 					>
 					<File
+						RelativePath=".\MTLLIB.C"
+						>
+					</File>
+					<File
 						RelativePath=".\RENDER.C"
 						>
 					</File>

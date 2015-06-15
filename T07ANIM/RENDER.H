@@ -16,18 +16,18 @@
 
 /* Матрицы */
 extern MATR
-DS6_RndMatrWorld,
-DS6_RndMatrView,
-DS6_RndMatrProj,
-DS6_RndMatrWorldViewProj;
+  DS6_RndMatrWorld,
+  DS6_RndMatrView,
+  DS6_RndMatrProj,
+  DS6_RndMatrWorldViewProj;
 
 /* Матрица изменения примитива при создании */
 extern MATR DS6_RndPrimMatrConvert;
 
 /* Параметры проецирования */
 extern DBL
-DS6_RndWp, DS6_RndHp,    /* размеры обрасти проецирования */
-DS6_RndProjDist;         /* расстояние до плоскости проекции */
+  DS6_RndWp, DS6_RndHp,    /* размеры обрасти проецирования */
+  DS6_RndProjDist;         /* расстояние до плоскости проекции */
 
 /* Шейдер по умолчанию */
 extern UINT DS6_RndProg;
@@ -39,7 +39,7 @@ extern UINT DS6_RndProg;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (UINT) номер загруженной программы.
 */
-UINT DS6_ShaderLoad(CHAR *FileNamePrefix);
+UINT DS6_ShaderLoad( CHAR *FileNamePrefix );
 
 /* Функция уничтодения шейдеров для программы.
 * АРНУМЕНТЫ:
@@ -47,7 +47,61 @@ UINT DS6_ShaderLoad(CHAR *FileNamePrefix);
 *       UINT PrgId;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_ShaderFree(UINT PrgId);
+VOID DS6_ShaderFree( UINT PrgId );
+
+/***
+ * Работа с материалами
+ ***/
+
+/* Тип задания материала поверхности */
+typedef struct tagds6MATERIAL
+{
+  /* Имя материала */
+  CHAR Name[300];
+
+  /* Коэффициенты отражения */
+  VEC Ka, Kd, Ks;
+  FLT Kp; /* Степень "бликовости" */
+
+  /* Коэффициент прозрачности */
+  FLT Kt;
+
+  /* Текстура поверхности */
+  INT TexId;
+} ds6MATERIAL;
+
+/* Глобальная таблица материалов */
+#define DS6_MATERIAL_MAX 300
+extern INT DS6_MtlLibSize;
+extern ds6MATERIAL DS6_MtlLib[DS6_MATERIAL_MAX];
+
+/* Функция добавления материала в библиотеку.
+ * АРГУМЕНТЫ:
+ *   - структура с памаметрами материала:
+ *       ds6MATERIAL *Mtl;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+ *   (INT) порядковый номер добавленного материала (0 при ошибке).
+ */
+INT DS6_MtlAdd( ds6MATERIAL *Mtl );
+
+/* Функция поиска материала по имени.
+ * АРГУМЕНТЫ:
+ *   - имя материала:
+ *       CHAR *Name;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+ *   (INT) порядковый номер найденного материала (0 при ошибке).
+ */
+INT DS6_MtlFind( CHAR *Name );
+
+/* Функция загрузки материала из файла (*.MTL).
+ * АРГУМЕНТЫ:
+ *   - имя файла материала:
+ *       CHAR *FileName;
+ * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
+ *   (INT) количество загруженных материалов.
+ */
+INT DS6_MtlLoad( CHAR *FileName );
+
 
 /***
 * Работа с примитивами
@@ -67,7 +121,8 @@ typedef struct tagds6PRIM
   INT
       VA,          /* массив вершин */
       VBuf, IBuf,  /* буфера вершин и индексов */
-      NumOfI;      /* количество индексов для вывода примитива */
+      NumOfI,      /* количество индексов для вывода примитива */
+      MtlNo;       /* номер материала из библиотеки */
 } ds6PRIM;
 
 /* Тип хранения текстурных координат */
@@ -85,7 +140,7 @@ typedef struct tagds6UV
 */
 __inline ds6UV UVSet(FLT U, FLT V)
 {
-  ds6UV UV = { U, V };
+  ds6UV UV = {U, V};
 
   return UV;
 } /* End of 'UVSet' function */
@@ -113,8 +168,8 @@ typedef struct tagds6VERTEX
 *       INT *Indices;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type, 
-                    INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices);
+VOID DS6_PrimCreate( ds6PRIM *Prim, ds6PRIM_TYPE Type, 
+                     INT NoofV, INT NoofI, ds6VERTEX *Vertices, INT *Indices );
 
 /* Функция удаления примитива.
 * АРГУМЕНТЫ:
@@ -122,7 +177,7 @@ VOID DS6_PrimCreate(ds6PRIM *Prim, ds6PRIM_TYPE Type,
 *       ds6PRIM *Prim;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_PrimFree(ds6PRIM *Prim);
+VOID DS6_PrimFree( ds6PRIM *Prim );
 
 /* Функция отрисовки примитива.
 * АРГУМЕНТЫ:
@@ -130,7 +185,7 @@ VOID DS6_PrimFree(ds6PRIM *Prim);
 *       ds6PRIM *Prim;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_PrimDraw(ds6PRIM *Prim);
+VOID DS6_PrimDraw( ds6PRIM *Prim );
 
 /* Функция создания примитива плоскость.
 * АРГУМЕНТЫ:
@@ -143,7 +198,7 @@ VOID DS6_PrimDraw(ds6PRIM *Prim);
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (BOOL) TRUE при успехе, иначе FALSE.
 */
-BOOL DS6_PrimCreatePlane(ds6PRIM *Prim, VEC Du, VEC Dv, INT N, INT M);
+BOOL DS6_PrimCreatePlane( ds6PRIM *Prim, VEC Du, VEC Dv, INT N, INT M );
 
 /* Функция создания примитива сфера.
 * АРГУМЕНТЫ:
@@ -158,7 +213,7 @@ BOOL DS6_PrimCreatePlane(ds6PRIM *Prim, VEC Du, VEC Dv, INT N, INT M);
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (BOOL) TRUE при успехе, иначе FALSE.
 */
-BOOL DS6_PrimCreateSphere(ds6PRIM *Prim, VEC C, FLT R, INT N, INT M);
+BOOL DS6_PrimCreateSphere( ds6PRIM *Prim, VEC C, FLT R, INT N, INT M );
 
 /* Функция загрузки геометрического объекта.
 * АРГУМЕНТЫ:
@@ -169,7 +224,7 @@ BOOL DS6_PrimCreateSphere(ds6PRIM *Prim, VEC C, FLT R, INT N, INT M);
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (BOOL) TRUE при успехе, FALSE иначе.
 */
-BOOL DS6_PrimLoad(ds6PRIM *GObj, CHAR *FileName);
+BOOL DS6_PrimLoad( ds6PRIM *GObj, CHAR *FileName );
 
 /***
 * Работа с геометрическими объектами
@@ -191,7 +246,7 @@ typedef struct tagds6GEOM
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (INT) номер добавленного примитива в массиве (-1 при ошибке).
 */
-INT DS6_GeomAddPrim(ds6GEOM *G, ds6PRIM *Prim);
+INT DS6_GeomAddPrim( ds6GEOM *G, ds6PRIM *Prim );
 
 /* Функция освобождения геометрического объекта.
 * АРГУМЕНТЫ:
@@ -199,7 +254,7 @@ INT DS6_GeomAddPrim(ds6GEOM *G, ds6PRIM *Prim);
 *       ds6GEOM *G;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_GeomFree(ds6GEOM *G);
+VOID DS6_GeomFree( ds6GEOM *G );
 
 /* Функция отображения геометрического объекта.
 * АРГУМЕНТЫ:
@@ -207,7 +262,7 @@ VOID DS6_GeomFree(ds6GEOM *G);
 *       ds6GEOM *G;
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ: Нет.
 */
-VOID DS6_GeomDraw(ds6GEOM *G);
+VOID DS6_GeomDraw( ds6GEOM *G );
 
 /* Функция загрузки геометрического объекта из G3D файла.
 * АРГУМЕНТЫ:
@@ -218,7 +273,7 @@ VOID DS6_GeomDraw(ds6GEOM *G);
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (BOOL) TRUE при успехе, иначе - FALSE.
 */
-BOOL DS6_GeomLoad(ds6GEOM *G, CHAR *FileName);
+BOOL DS6_GeomLoad( ds6GEOM *G, CHAR *FileName );
 
 /* Функция загрузки текстуры.
 * АРГУМЕНТЫ:
@@ -227,7 +282,7 @@ BOOL DS6_GeomLoad(ds6GEOM *G, CHAR *FileName);
 * ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
 *   (INT ) идентификатор OpenGL для текстуры.
 */
-INT DS6_TextureLoad(CHAR *FileName);
+INT DS6_TextureLoad( CHAR *FileName );
 
 #endif /* __RENDER_H_ */
 
