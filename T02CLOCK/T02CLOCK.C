@@ -170,26 +170,14 @@ LRESULT CALLBACK MyWindowFunc( HWND hWnd, UINT Msg,
       hMemDCLogo, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);    
 
     GetLocalTime(&st);
-    /*hPen = CreatePen(PS_SOLID, 4, RGB(2, 2, 8));
-    SelectObject(hMemDC, hPen);
-    DrawArrow(hMemDC, w / 2, h / 2, 290, st.wSecond * 6);  
-    DeleteObject(hPen);   
-    hPen = CreatePen(PS_SOLID, 4, RGB(228, 22, 8));
-    SelectObject(hMemDC, hPen); 
-    DrawArrow(hMemDC, w / 2, h / 2, 250, st.wMinute * 6); 
-    DeleteObject(hPen);     
-    hPen = CreatePen(PS_SOLID, 4, RGB(22, 8, 228));
-    SelectObject(hMemDC, hPen);
-    DrawArrow(hMemDC, w / 2, h / 2, 150, (st.wHour % 12) * 30);  
-    DeleteObject(hPen);   */
-    /*hBrush = CreateSolidBrush(RGB(0, 0, 0));
-    hOldBr = SelectObject(hMemDC, hBrush);*/
-    /*SelectObject(hMemDC, hOldBr); */
+    
     SelectObject(hMemDC, GetStockObject(BLACK_PEN));
     SelectObject(hMemDC, GetStockObject(BLACK_BRUSH)); 
-    DrawHand(hMemDC, w / 2, h / 2, 280, 30, st.wSecond * 6 * PI / 180);
-   /* DrawHand(hMemDC, w / 2, h / 2, 300, 30, (180 + st.wMinute * 6) * PI / 180);
-    DrawHand(hMemDC, w / 2, h / 2, 300, 30, (180 + (st.wHour % 12) * 30)) * PI / 180); */
+    DrawHand(hMemDC, w / 2, h / 2, 280, 30, st.wSecond * 6 * PI / 180 + PI);
+    DrawHand(hMemDC, w / 2, h / 2, 240, 30, (180 + st.wMinute * 6) * PI / 180);
+    DrawHand(hMemDC, w / 2, h / 2, 150, 30, (int)st.wHour % 12 * PI / 180);
+    //DrawHand(hMemDC, w / 2, h / 2, 300, 30, (180 + (st.wHour % 12) * 30)) * PI / 180);
+   
     SelectObject(hMemDC, GetStockObject(NULL_PEN));
     SelectObject(hMemDC, GetStockObject(NULL_BRUSH));
 
