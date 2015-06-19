@@ -179,36 +179,4 @@ VOID DS6_PrimDraw( ds6PRIM *Prim )
 
 } /* End of 'DS6_PrimDraw' function */
 
-/* Функция создания примитива плоскость.
-* АРГУМЕНТЫ:
-*   - указатель на примитив:
-*       ds6PRIM *Prim;
-*   - касательные вектора-стороны:
-*       VEC Du, Dv;
-*   - разбиение:
-*       INT N, M;
-* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
-*   (BOOL) TRUE при успехе, иначе FALSE.
-*/
-BOOL DS6_PrimCreatePlane(ds6PRIM *Prim, VEC Du, VEC Dv, INT N, INT M)
-{
-} /* End of 'DS6_PrimCreatePlane' function */
-
-/* Функция создания примитива сфера.
-* АРГУМЕНТЫ:
-*   - указатель на примитив:
-*       ds6PRIM *Prim;
-*   - центр сферы:
-*       VEC С;
-*   - радиус сферы:
-*       FLT R;
-*   - разбиение:
-*       INT N, M;
-* ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:
-*   (BOOL) TRUE при успехе, иначе FALSE.
-*/
-BOOL DS6_PrimCreateSphere(ds6PRIM *Prim, VEC C, FLT R, INT N, INT M)
-{
-} /* End of 'DS6_PrimCreateSphere' function */
-
 /* END OF 'PRIM.C' FILE */

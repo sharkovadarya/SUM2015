@@ -44,8 +44,7 @@ static VOID DS6_AnimUnitInit(ds6UNIT_MODEL *Uni, ds6ANIM *Ani)
   /* загружаем текстуру */
   Uni->TextId = DS6_TextureLoad("ElphSkin.BMP");
 
-  DS6_PrimCreate(&Uni->Pr, DS6_PRIM_TRIMESH, 4, 6, V, I);
-
+  
   DS6_GeomLoad(&Uni->Model, "elephant.g3d");
   DS6_RndPrimMatrConvert = MatrRotateX(-90);
   //DS6_GeomLoad(&Uni->Geom, "X6.G3D");
